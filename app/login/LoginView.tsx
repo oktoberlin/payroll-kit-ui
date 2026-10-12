@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
+import { Credit } from "@/components/ui/Credit";
 import { Icon } from "@/components/ui/Icon";
 import { api, ApiError, login } from "@/lib/api";
 import { DEMO_ACCOUNTS, DEMO_PASSWORD, ROLE_LABEL, homeFor } from "@/lib/demo";
@@ -159,6 +160,7 @@ export function LoginView() {
           <p className="m-0 text-[12px] text-ink-3">
             Password for all demo accounts: <span className="font-mono text-ink-2">{DEMO_PASSWORD}</span>
           </p>
+          <Credit className="mt-2" />
         </div>
       </main>
     </div>
