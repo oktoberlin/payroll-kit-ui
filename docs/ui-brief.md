@@ -1,7 +1,8 @@
 # PayrollKit UI brief
 
-A prompt for a design tool, plus notes for building the UI afterwards. The UI will live at
-`payroll.hookangles.com`; the API is at `api.payroll.hookangles.com`.
+A prompt for a design tool, plus notes on how the finished UI uses this API. The UI lives in the
+[`payroll-kit-ui`](https://github.com/oktoberlin/payroll-kit-ui) repository, at `payroll.hookangles.com`; the API is
+at `api.payroll.hookangles.com`.
 
 ## Why it should look different from the other demo apps
 
@@ -113,19 +114,20 @@ All amounts show exactly 2 decimals with thousands separators and the "$" only i
 If the design tool only accepts short prompts, send the "Look and feel", "Users and roles" and "Data"
 sections plus screens 1 to 5 first, then the remaining screens in follow-up rounds.
 
-## Notes for building it
+## How the UI uses this API
 
-- **Auth:** the API uses JWT (`POST /api/auth/token/`; access token 30 min, refresh 1 day). Use a Next
-  middleware / route handlers that proxy to `API_ORIGIN`, as the other demo apps do. The browser then
-  stays same-origin, so the API's lack of CORS support doesn't matter.
-- **Deploy:** a new Vercel project for the UI at `payroll.hookangles.com`, with `API_ORIGIN` set to
+- **Auth:** the API uses JWT (`POST /api/auth/token/`; access token 30 min, refresh 1 day). The Next.js server holds
+  the tokens in httpOnly cookies and proxies `/api/*` to the API, so the browser stays same-origin and the API needs
+  no CORS configuration. The proxy also forwards the real visitor IP with a shared secret (`PROXY_IP_SECRET`), which
+  the API uses for rate limiting.
+- **Deploy:** the UI is a Vercel project at `payroll.hookangles.com` with `API_ORIGIN` set to
   `https://api.payroll.hookangles.com`. The API stays on the VPS (see `deploy/SETUP.md`).
 - **API facts the UI relies on:**
-  - `calculate` returns the header `X-Recalculated: true|false`.
-  - Errors: 400 for validation and calculation problems (for example negative net pay), 403 for the wrong
-    role, 409 when deleting something still referenced.
-  - `GET /api/payslips/{id}/` includes `ytd`; the list does not.
-  - `GET /api/payroll-runs/{id}/export/` returns the CSV register.
-  - Money values arrive as strings. Display them as returned; never convert them to floats.
-- **Not in the API yet:** CORS headers, and any dashboard summary endpoint. The dashboard totals can be
-  computed from the runs and payslips endpoints, or a small summary endpoint can be added.
+  - `GET /api/auth/me/` returns the user, role, company and (for employees) their employee record.
+  - Runs include `period`, exact `totals`, `is_stale`, and `calculated_by` / `approved_by` / `paid_by` usernames.
+  - `calculate` returns the header `X-Recalculated: true|false`; a failed calculation names the employee.
+  - Errors: 400 for validation and calculation problems, 403 for the wrong role, 409 when deleting something
+    still referenced. Duplicate employee numbers and deduction codes are 400 field errors.
+  - `GET /api/payslips/{id}/` includes `ytd`; the list does not. Employees only see approved or paid payslips.
+  - Audit entries carry `object_label` and `{old, new}` changes.
+  - Money values arrive as strings and are displayed as returned; never converted to floats.
