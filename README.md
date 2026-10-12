@@ -13,7 +13,8 @@ The web app for [PayrollKit API](https://github.com/oktoberlin/payroll-kit): pay
 
 ## Try it
 
-- Live: `https://payroll.hookangles.com`
+- **Live demo:** https://payroll.hookangles.com
+- **API docs (Swagger):** https://api.payroll.hookangles.com/api/docs/ · [API source](https://github.com/oktoberlin/payroll-kit)
 - Sign in with one click as any demo account (password `demo-pass-123`):
 
 | User | Role | What it shows |
