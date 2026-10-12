@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="display:flex;flex-direction:column;gap:16px">
+
+<sc-if value="{{ isList }}">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+    <div>
+      <h1 style="margin:0;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.01em">Employees</h1>
+      <p style="margin:2px 0 0;color:var(--pk-text-2)">Active employees get a payslip in every run for their pay period.</p>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button onClick="{{ goImport }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-hover)"><i class="icon-upload"></i>Import CSV</button>
+      <button onClick="{{ goNew }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-primary-hover)"><i class="icon-plus"></i>Add employee</button>
+    </div>
+  </div>
+  <div style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;box-shadow:var(--pk-shadow-1);overflow:hidden">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border-bottom:1px solid var(--pk-border)">
+      <label style="position:relative;display:flex;align-items:center;flex:1 1 220px;max-width:300px">
+        <i class="icon-search" style="position:absolute;left:10px;color:var(--pk-text-3)"></i>
+        <input value="{{ q }}" onChange="{{ setQ }}" placeholder="Search name, number or email" aria-label="Search employees" style="height:32px;width:100%;padding:0 10px 0 30px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface)">
+      </label>
+      <div role="radiogroup" aria-label="Pay type" style="display:flex;padding:2px;border-radius:7px;background:var(--pk-surface-2);border:1px solid var(--pk-border)">
+        <sc-for list="{{ payTypes }}" as="t">
+        <button role="radio" aria-checked="{{ t.on }}" onClick="{{ t.pick }}" style="height:26px;padding:0 10px;border-radius:5px;border:0;cursor:pointer;font-weight:500;font-size:12.5px;background:{{ t.bg }};color:{{ t.fg }};box-shadow:{{ t.sh }};white-space:nowrap">{{ t.label }}</button>
+        </sc-for>
+      </div>
+      <label style="display:flex;align-items:center;gap:6px;color:var(--pk-text-2);font-size:12.5px">Status
+        <select value="{{ active }}" onChange="{{ setActive }}" style="height:30px;padding:0 8px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface)">
+          <option value="active">Active</option><option value="inactive">Inactive</option><option value="all">All</option>
+        </select>
+      </label>
+      <span style="margin-left:auto;font-size:12px;color:var(--pk-text-3)">{{ countLabel }}</span>
+    </div>
+    <sc-if value="{{ showTable }}">
+    <div style="overflow:auto">
+    <table style="width:100%;border-collapse:separate;border-spacing:0;font-size:13px">
+      <thead><tr>
+        <th style="position:sticky;top:0;background:var(--pk-surface-2);height:34px;padding:0 12px 0 16px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">No.</th>
+        <th style="position:sticky;top:0;background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Name</th>
+        <th style="position:sticky;top:0;background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Email</th>
+        <th style="position:sticky;top:0;background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Pay type</th>
+        <th style="position:sticky;top:0;background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:right;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Rate ($)</th>
+        <th style="position:sticky;top:0;background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Tax table</th>
+        <th style="position:sticky;top:0;background:var(--pk-surface-2);height:34px;padding:0 16px 0 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Status</th>
+      </tr></thead>
+      <tbody>
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="6">
+        <tr tabindex="0" onClick="{{ r.open }}" onKeyDown="{{ r.key }}" style="cursor:pointer" style-hover="background:var(--pk-hover)">
+          <td style="height:40px;padding:0 12px 0 16px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);font-size:12.5px;white-space:nowrap">{{ r.no }}</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-weight:500;white-space:nowrap">{{ r.name }}</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);color:var(--pk-text-2)">{{ r.email }}</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border)"><span style="display:inline-flex;align-items:center;gap:5px;color:var(--pk-text-2)"><i class="{{ r.typeIcon }}" style="color:var(--pk-text-3)"></i>{{ r.type }}</span></td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap">{{ r.rate }} <span style="color:var(--pk-text-3);font-size:11.5px">{{ r.unit }}</span></td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);color:var(--pk-text-2);white-space:nowrap">Illustrative progressive</td>
+          <td style="height:40px;padding:0 16px 0 12px;border-bottom:1px solid var(--pk-border)"><span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 8px 0 7px;border-radius:999px;font-size:12px;font-weight:500;background:var(--pk-surface-2);border:1px solid var(--pk-border);color:var(--pk-text-2);white-space:nowrap"><span style="width:6px;height:6px;border-radius:50%;background:var(--pk-text-2)"></span>Active</span></td>
+        </tr>
+        </sc-for>
+      </tbody>
+    </table>
+    </div>
+    </sc-if>
+    <sc-if value="{{ loading }}">
+    <div aria-busy="true">
+      <sc-for list="{{ skel }}" as="k">
+      <div style="height:40px;display:grid;grid-template-columns:60px 1.4fr 2fr 1fr 1fr 1.4fr 80px;gap:16px;align-items:center;padding:0 16px;border-bottom:1px solid var(--pk-border)">
+        <span style="height:10px;border-radius:4px;background:var(--pk-skeleton);animation:pkPulse 1.4s ease-in-out infinite"></span>
+        <span style="height:10px;border-radius:4px;background:var(--pk-skeleton);width:{{ k }};animation:pkPulse 1.4s ease-in-out infinite"></span>
+        <span style="height:10px;border-radius:4px;background:var(--pk-skeleton);width:80%;animation:pkPulse 1.4s ease-in-out infinite"></span>
+        <span style="height:10px;border-radius:4px;background:var(--pk-skeleton);width:60%;animation:pkPulse 1.4s ease-in-out infinite"></span>
+        <span style="height:10px;border-radius:4px;background:var(--pk-skeleton);animation:pkPulse 1.4s ease-in-out infinite"></span>
+        <span style="height:10px;border-radius:4px;background:var(--pk-skeleton);width:70%;animation:pkPulse 1.4s ease-in-out infinite"></span>
+        <span style="height:18px;border-radius:999px;background:var(--pk-skeleton);animation:pkPulse 1.4s ease-in-out infinite"></span>
+      </div>
+      </sc-for>
+    </div>
+    </sc-if>
+    <sc-if value="{{ emptyAll }}">
+    <div style="padding:56px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px">
+      <span style="width:44px;height:44px;border-radius:10px;background:var(--pk-primary-soft);color:var(--pk-primary-soft-fg);display:grid;place-items:center;margin-bottom:6px"><i class="icon-users" style="font-size:20px"></i></span>
+      <h2 style="margin:0;font-size:15px;font-weight:600">No employees yet</h2>
+      <p style="margin:0 0 10px;color:var(--pk-text-2);max-width:380px;text-wrap:pretty">Import your team from a CSV file in one go, or add people one at a time.</p>
+      <div style="display:flex;gap:8px">
+        <button onClick="{{ goImport }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap"><i class="icon-upload"></i>Import CSV</button>
+        <button onClick="{{ goNew }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap">Add employee</button>
+      </div>
+    </div>
+    </sc-if>
+    <sc-if value="{{ emptyFiltered }}">
+    <div style="padding:48px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px">
+      <span style="width:44px;height:44px;border-radius:10px;background:var(--pk-surface-2);border:1px solid var(--pk-border);color:var(--pk-text-2);display:grid;place-items:center;margin-bottom:6px"><i class="icon-search-x" style="font-size:20px"></i></span>
+      <h2 style="margin:0;font-size:15px;font-weight:600">No employees match these filters</h2>
+      <p style="margin:0 0 10px;color:var(--pk-text-2)">All 6 employees are active. Try a different status or pay type.</p>
+      <button onClick="{{ clearFilters }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap"><i class="icon-filter-x"></i>Clear filters</button>
+    </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isEdit }}">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span style="width:44px;height:44px;border-radius:50%;background:var(--pk-primary-soft);color:var(--pk-primary-soft-fg);display:grid;place-items:center;font-weight:600;font-size:15px">AS</span>
+      <div>
+        <div style="display:flex;align-items:center;gap:8px"><h1 style="margin:0;font-size:22px;line-height:28px;font-weight:600">Ava Stone</h1><span style="font-family:var(--pk-mono);color:var(--pk-text-3)">E001</span></div>
+        <p style="margin:0;color:var(--pk-text-2)">Salary · created 2026-01-05 by CSV import</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button onClick="{{ tryDelete }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--pk-rose-fg);font-weight:500;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-rose-soft)"><i class="icon-trash-2"></i>Delete</button>
+      <button onClick="{{ goList }}" style="height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap">Cancel</button>
+      <button onClick="{{ save }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-primary-hover)"><i class="icon-check"></i>Save changes</button>
+    </div>
+  </div>
+  <sc-if value="{{ conflict }}">
+  <div role="alert" style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:10px;background:var(--pk-rose-soft);color:var(--pk-rose-fg);border:1px solid color-mix(in oklab,var(--pk-rose) 30%,transparent)">
+    <i class="icon-octagon-x" style="font-size:16px;margin-top:1px"></i>
+    <div style="flex:1"><strong style="font-weight:600">Cannot delete, it is still in use.</strong> E001 has payslips in 3 payroll runs, including paid ones. Mark the employee inactive instead to leave them out of future runs. <span style="font-family:var(--pk-mono);font-size:11.5px;opacity:.85">409 Conflict</span></div>
+    <button onClick="{{ deactivate }}" style="height:28px;padding:0 10px;border-radius:6px;border:1px solid currentColor;background:transparent;color:inherit;font-weight:600;cursor:pointer;white-space:nowrap">Mark inactive</button>
+    <button onClick="{{ dismissConflict }}" aria-label="Dismiss" style="border:0;background:transparent;color:inherit;cursor:pointer;padding:4px"><i class="icon-x"></i></button>
+  </div>
+  </sc-if>
+  <sc-if value="{{ hasErrors }}">
+  <div role="alert" style="display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;background:var(--pk-rose-soft);color:var(--pk-rose-fg);border:1px solid color-mix(in oklab,var(--pk-rose) 30%,transparent)"><i class="icon-circle-alert" style="font-size:16px"></i><span><strong style="font-weight:600">{{ errorCount }}</strong> Nothing was saved.</span></div>
+  </sc-if>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;align-items:start">
+    <section style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;box-shadow:var(--pk-shadow-1);padding:16px;display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:14px;font-weight:600">Identity</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <label style="display:flex;flex-direction:column;gap:5px;font-weight:500">Employee number
+          <input value="{{ f.number }}" onChange="{{ set.number }}" aria-invalid="{{ e.numberInv }}" style="height:32px;padding:0 10px;border-radius:6px;border:1px solid {{ e.numberB }};background:var(--pk-surface);font-family:var(--pk-mono);font-weight:400">
+          <sc-if value="{{ e.number }}"><span style="display:flex;gap:5px;align-items:center;font-size:12px;font-weight:400;color:var(--pk-rose-fg)"><i class="icon-circle-alert"></i>{{ e.number }}</span></sc-if>
+        </label>
+        <label style="display:flex;flex-direction:column;gap:5px;font-weight:500">Email
+          <input value="{{ f.email }}" onChange="{{ set.email }}" aria-invalid="{{ e.emailInv }}" style="height:32px;padding:0 10px;border-radius:6px;border:1px solid {{ e.emailB }};background:var(--pk-surface);font-weight:400">
+          <sc-if value="{{ e.email }}"><span style="display:flex;gap:5px;align-items:center;font-size:12px;font-weight:400;color:var(--pk-rose-fg)"><i class="icon-circle-alert"></i>{{ e.email }}</span></sc-if>
+        </label>
+        <label style="display:flex;flex-direction:column;gap:5px;font-weight:500">First name
+          <input value="{{ f.first }}" onChange="{{ set.first }}" style="height:32px;padding:0 10px;border-radius:6px;border:1px solid {{ e.firstB }};background:var(--pk-surface);font-weight:400">
+          <sc-if value="{{ e.first }}"><span style="display:flex;gap:5px;align-items:center;font-size:12px;font-weight:400;color:var(--pk-rose-fg)"><i class="icon-circle-alert"></i>{{ e.first }}</span></sc-if>
+        </label>
+        <label style="display:flex;flex-direction:column;gap:5px;font-weight:500">Last name
+          <input value="{{ f.last }}" onChange="{{ set.last }}" style="height:32px;padding:0 10px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:400">
+        </label>
+      </div>
+      <h2 style="margin:6px 0 0;font-size:14px;font-weight:600">Employment</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <label style="display:flex;flex-direction:column;gap:5px;font-weight:500">Hire date <span style="font-weight:400;font-size:12px;color:var(--pk-text-3);margin-top:-4px">Optional · prorates the first period</span>
+          <input type="date" value="{{ f.hire }}" onChange="{{ set.hire }}" style="height:32px;padding:0 10px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-family:var(--pk-mono);font-weight:400">
+        </label>
+        <label style="display:flex;flex-direction:column;gap:5px;font-weight:500">Termination date <span style="font-weight:400;font-size:12px;color:var(--pk-text-3);margin-top:-4px">Last day employed</span>
+          <input type="date" value="{{ f.term }}" onChange="{{ set.term }}" style="height:32px;padding:0 10px;border-radius:6px;border:1px solid {{ e.termB }};background:var(--pk-surface);font-family:var(--pk-mono);font-weight:400">
+          <sc-if value="{{ e.term }}"><span style="display:flex;gap:5px;align-items:center;font-size:12px;font-weight:400;color:var(--pk-rose-fg)"><i class="icon-circle-alert"></i>{{ e.term }}</span></sc-if>
+        </label>
+      </div>
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+        <button type="button" role="switch" aria-checked="{{ f.activeStr }}" onClick="{{ toggleActive }}" style="width:34px;height:20px;border-radius:999px;border:0;padding:2px;cursor:pointer;background:{{ sw.bg }};display:flex;justify-content:{{ sw.just }};white-space:nowrap"><span style="width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3)"></span></button>
+        <span style="display:flex;flex-direction:column"><span style="font-weight:500">{{ sw.label }}</span><span style="font-size:12px;color:var(--pk-text-3)">Inactive employees are skipped when a run is calculated.</span></span>
+      </label>
+    </section>
+    <section style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;box-shadow:var(--pk-shadow-1);padding:16px;display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:14px;font-weight:600">Pay</h2>
+      <div role="radiogroup" aria-label="Pay type" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <sc-for list="{{ payOpts }}" as="o">
+        <button type="button" role="radio" aria-checked="{{ o.on }}" onClick="{{ o.pick }}" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid {{ o.border }};background:{{ o.bg }};cursor:pointer;text-align:left">
+          <span style="width:16px;height:16px;border-radius:50%;border:1.5px solid {{ o.border }};display:grid;place-items:center"><span style="width:8px;height:8px;border-radius:50%;background:{{ o.dot }}"></span></span>
+          <span style="display:flex;flex-direction:column"><span style="font-weight:500">{{ o.label }}</span><span style="font-size:12px;color:var(--pk-text-3)">{{ o.desc }}</span></span>
+        </button>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <label style="display:flex;flex-direction:column;gap:5px;font-weight:500">{{ amountLabel }}
+          <span style="position:relative;display:flex;align-items:center">
+            <span style="position:absolute;left:10px;color:var(--pk-text-3);font-family:var(--pk-mono)">$</span>
+            <input value="{{ amountVal }}" onChange="{{ set.amount }}" inputmode="decimal" aria-invalid="{{ e.amountInv }}" style="height:32px;width:100%;padding:0 10px 0 22px;border-radius:6px;border:1px solid {{ e.amountB }};background:var(--pk-surface);font-family:var(--pk-mono);text-align:right;font-weight:400">
+          </span>
+          <sc-if value="{{ e.amount }}"><span style="display:flex;gap:5px;align-items:center;font-size:12px;font-weight:400;color:var(--pk-rose-fg)"><i class="icon-circle-alert"></i>{{ e.amount }}</span></sc-if>
+        </label>
+        <label style="display:flex;flex-direction:column;gap:5px;font-weight:500">Overtime multiplier
+          <input value="{{ f.ot }}" onChange="{{ set.ot }}" style="height:32px;padding:0 10px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-family:var(--pk-mono);text-align:right;font-weight:400">
+        </label>
+      </div>
+      <label style="display:flex;flex-direction:column;gap:5px;font-weight:500">Tax table
+        <select style="height:32px;padding:0 8px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:400"><option>Illustrative progressive table</option><option>None (no tax withheld)</option></select>
+      </label>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">
+        <h2 style="margin:0;font-size:14px;font-weight:600">Deductions &amp; benefits</h2>
+        <button onClick="{{ goDeductions }}" style="border:0;background:none;color:var(--pk-primary-fg);font-weight:500;cursor:pointer;display:flex;align-items:center;gap:4px">Manage<i class="icon-arrow-right"></i></button>
+      </div>
+      <div style="border:1px solid var(--pk-border);border-radius:8px;overflow:hidden">
+        <sc-for list="{{ assigned }}" as="a">
+        <div style="display:grid;grid-template-columns:64px 1fr auto;gap:10px;align-items:center;min-height:34px;padding:0 12px;border-bottom:1px solid var(--pk-border)">
+          <span style="font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-3)">{{ a.code }}</span>
+          <span>{{ a.name }} <span style="color:var(--pk-text-3);font-size:12px">· {{ a.kind }}</span></span>
+          <span style="font-family:var(--pk-mono);text-align:right">{{ a.value }} <span style="font-family:var(--pk-sans);font-size:11.5px;color:var(--pk-text-3)">default</span></span>
+        </div>
+        </sc-for>
+      </div>
+    </section>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isImport }}">
+  <div>
+    <h1 style="margin:0;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.01em">Import employees</h1>
+    <p style="margin:2px 0 0;color:var(--pk-text-2)">Upload a CSV. Every row is validated first, and the import is all-or-nothing.</p>
+  </div>
+  <sc-if value="{{ imp.errors }}">
+  <div role="alert" style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:10px;background:var(--pk-rose-soft);color:var(--pk-rose-fg);border:1px solid color-mix(in oklab,var(--pk-rose) 30%,transparent)">
+    <i class="icon-octagon-x" style="font-size:18px;margin-top:1px"></i>
+    <div style="flex:1;display:flex;flex-direction:column;gap:2px">
+      <strong style="font-weight:600;font-size:14px">No employees were imported</strong>
+      <span>new-hires.csv has 3 rows with errors. Fix them and upload the file again. Rows without errors were not imported either.</span>
+    </div>
+  </div>
+  </sc-if>
+  <sc-if value="{{ imp.success }}">
+  <div role="status" style="display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:10px;background:var(--pk-emerald-soft);color:var(--pk-emerald-fg);border:1px solid color-mix(in oklab,var(--pk-emerald) 30%,transparent)">
+    <i class="icon-circle-check" style="font-size:18px"></i>
+    <div style="flex:1"><strong style="font-weight:600">8 employees imported</strong> from new-hires.csv. They are active and included in the next calculation.</div>
+    <button onClick="{{ goList }}" style="height:30px;padding:0 10px;border-radius:6px;border:1px solid currentColor;background:transparent;color:inherit;font-weight:600;cursor:pointer;white-space:nowrap">View employees</button>
+  </div>
+  </sc-if>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start">
+    <section style="grid-column:span 2;min-width:0;display:flex;flex-direction:column;gap:12px">
+      <sc-if value="{{ imp.idle }}">
+      <div role="button" tabindex="0" aria-label="Upload CSV file" onClick="{{ upload }}" onKeyDown="{{ uploadKey }}" onDragOver="{{ dragOver }}" onDragLeave="{{ dragLeave }}" onDrop="{{ drop }}" style="min-height:260px;border-radius:12px;border:2px dashed {{ dz.border }};background:{{ dz.bg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:24px;cursor:pointer;transition:background .12s,border-color .12s">
+        <span style="width:48px;height:48px;border-radius:12px;background:var(--pk-surface);border:1px solid var(--pk-border);display:grid;place-items:center;color:var(--pk-primary-fg);box-shadow:var(--pk-shadow-1)"><i class="icon-file-up" style="font-size:22px"></i></span>
+        <span style="font-weight:600;font-size:15px">{{ dz.title }}</span>
+        <span style="color:var(--pk-text-2)">or <span style="color:var(--pk-primary-fg);font-weight:500;text-decoration:underline;text-underline-offset:2px">browse files</span> · .csv, UTF-8, up to 2 MB</span>
+      </div>
+      </sc-if>
+      <sc-if value="{{ imp.hasFile }}">
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;background:var(--pk-surface);border:1px solid var(--pk-border);box-shadow:var(--pk-shadow-1)">
+        <span style="width:34px;height:34px;border-radius:8px;background:var(--pk-surface-2);border:1px solid var(--pk-border);display:grid;place-items:center;color:var(--pk-text-2)"><i class="icon-file-spreadsheet" style="font-size:16px"></i></span>
+        <div style="flex:1;min-width:0"><div style="font-weight:500;font-family:var(--pk-mono);font-size:12.5px">new-hires.csv</div><div style="font-size:12px;color:var(--pk-text-3)">8 data rows · 1.2 KB · uploaded by {{ actor }}</div></div>
+        <button onClick="{{ reset }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap"><i class="icon-upload"></i>Upload another file</button>
+      </div>
+      </sc-if>
+      <sc-if value="{{ imp.errors }}">
+      <div style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;box-shadow:var(--pk-shadow-1);overflow:hidden">
+        <div style="padding:10px 16px;border-bottom:1px solid var(--pk-border);display:flex;align-items:center;gap:8px"><h2 style="margin:0;font-size:14px;font-weight:600">Row errors</h2><span style="font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-3)">3</span></div>
+        <div style="overflow:auto">
+        <table style="width:100%;border-collapse:separate;border-spacing:0">
+          <thead><tr>
+            <th style="background:var(--pk-surface-2);height:34px;padding:0 12px 0 16px;text-align:right;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);width:64px;white-space:nowrap">Row</th>
+            <th style="background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Error</th>
+            <th style="background:var(--pk-surface-2);height:34px;padding:0 16px 0 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">How to fix</th>
+          </tr></thead>
+          <tbody>
+            <sc-for list="{{ rowErrors }}" as="x">
+            <tr>
+              <td style="height:40px;padding:0 12px 0 16px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);text-align:right;white-space:nowrap">{{ x.row }}</td>
+              <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border)"><span style="display:inline-flex;align-items:center;gap:6px;color:var(--pk-rose-fg)"><i class="icon-circle-alert"></i><span>Row {{ x.row }}: <span style="font-family:var(--pk-mono);font-size:12.5px">{{ x.error }}</span></span></span></td>
+              <td style="height:40px;padding:0 16px 0 12px;border-bottom:1px solid var(--pk-border);color:var(--pk-text-2)">{{ x.fix }}</td>
+            </tr>
+            </sc-for>
+          </tbody>
+        </table>
+        </div>
+      </div>
+      </sc-if>
+    </section>
+    <aside style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;box-shadow:var(--pk-shadow-1);padding:16px;display:flex;flex-direction:column;gap:12px">
+      <h2 style="margin:0;font-size:14px;font-weight:600">File format</h2>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:12px;color:var(--pk-text-2)">Required columns</span>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <sc-for list="{{ reqCols }}" as="c"><span style="font-family:var(--pk-mono);font-size:12px;padding:2px 7px;border-radius:4px;background:var(--pk-surface-2);border:1px solid var(--pk-border)">{{ c }}</span></sc-for>
+        </div>
+        <span style="font-size:12px;color:var(--pk-text-2);margin-top:6px">Optional columns</span>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <span style="font-family:var(--pk-mono);font-size:12px;padding:2px 7px;border-radius:4px;border:1px dashed var(--pk-border-strong);color:var(--pk-text-2)">annual_salary</span>
+          <span style="font-family:var(--pk-mono);font-size:12px;padding:2px 7px;border-radius:4px;border:1px dashed var(--pk-border-strong);color:var(--pk-text-2)">hourly_rate</span>
+        </div>
+      </div>
+      <ul style="margin:0;padding:0 0 0 16px;color:var(--pk-text-2);display:flex;flex-direction:column;gap:4px">
+        <li><span style="font-family:var(--pk-mono)">pay_type</span> is <span style="font-family:var(--pk-mono)">salary</span> or <span style="font-family:var(--pk-mono)">hourly</span></li>
+        <li>Employee numbers must be unique in the file and the company</li>
+        <li>Amounts as plain decimals, e.g. <span style="font-family:var(--pk-mono)">54000.00</span></li>
+      </ul>
+      <button onClick="{{ template }}" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap"><i class="icon-download"></i>Download template</button>
+    </aside>
+  </div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  EMP = [
+    ['E001', 'Ava Stone', 'ava@example.com', 'salary', '72,000.00', '/ yr'],
+    ['E002', 'Ben Carter', 'ben@example.com', 'salary', '54,000.00', '/ yr'],
+    ['E003', 'Chloe Diaz', 'chloe@example.com', 'salary', '96,000.00', '/ yr'],
+    ['E004', 'Dev Patel', 'dev@example.com', 'hourly', '22.50', '/ h'],
+    ['E005', 'Ella Moore', 'ella@example.com', 'hourly', '18.75', '/ h'],
+    ['E006', 'Finn Lee', 'finn@example.com', 'hourly', '31.00', '/ h'],
+  ];
+  init(v) {
+    const errs = v === 'errors';
+    return {
+      q: '', pay: 'all', active: 'active', conflict: v === 'conflict', drag: false,
+      imp: v === 'errors' ? 'errors' : v === 'success' ? 'success' : 'idle',
+      f: errs ? { number: 'E002', first: '', last: 'Stone', email: 'ava@example', pay: 'salary', salary: '0.00', rate: '0.00', ot: '1.50', hire: '2026-03-01', term: '2026-02-15', active: true }
+              : { number: 'E001', first: 'Ava', last: 'Stone', email: 'ava@example.com', pay: 'salary', salary: '72000.00', rate: '0.00', ot: '1.50', hire: '', term: '', active: true },
+      showErr: errs,
+    };
+  }
+  state = this.init(this.props.variant);
+  componentDidUpdate(p) { if (p.variant !== this.props.variant || p.view !== this.props.view) this.setState(this.init(this.props.variant)); }
+
+  validate(f) {
+    const e = {};
+    const others = this.EMP.slice(1).map(x => x[0]);
+    if (!f.number.trim()) e.number = 'Employee number is required';
+    else if (others.includes(f.number.trim())) e.number = `${f.number.trim()} is already used by ${this.EMP.find(x => x[0] === f.number.trim())[1]}`;
+    if (!f.first.trim()) e.first = 'First name is required';
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email)) e.email = 'Enter a valid email address, e.g. ava@example.com';
+    const amt = f.pay === 'salary' ? f.salary : f.rate;
+    if (!/^\d+(\.\d{1,2})?$/.test(amt.replace(/,/g, ''))) e.amount = 'Use a decimal amount with up to 2 places';
+    else if (Number(amt.replace(/,/g, '')) <= 0) e.amount = f.pay === 'salary' ? 'annual_salary must be > 0 for salary employees' : 'hourly_rate must be > 0 for hourly employees';
+    if (f.hire && f.term && f.term < f.hire) e.term = 'Must be on or after the hire date (2026-03-01)';
+    return e;
+  }
+
+  renderVals() {
+    const p = this.props, st = this.state, view = p.view ?? 'employees';
+    const ls = p.listState ?? 'ready';
+    const go = (k) => p.go?.(k);
+    const q = st.q.toLowerCase();
+    const filtered = this.EMP.filter(x => (st.pay === 'all' || x[3] === st.pay) && st.active !== 'inactive' && (!q || x.join(' ').toLowerCase().includes(q)));
+    const rows = filtered.map(x => ({ no: x[0], name: x[1], email: x[2], type: x[3] === 'salary' ? 'Salary' : 'Hourly', typeIcon: x[3] === 'salary' ? 'icon-briefcase' : 'icon-clock', rate: x[4], unit: x[5], open: () => go('employee'), key: (e) => { if (e.key === 'Enter') go('employee'); } }));
+    const payTypes = [['all', 'All'], ['salary', 'Salary'], ['hourly', 'Hourly']].map(([k, label]) => {
+      const on = st.pay === k;
+      return { label, on: on ? 'true' : 'false', bg: on ? 'var(--pk-surface)' : 'transparent', fg: on ? 'var(--pk-text)' : 'var(--pk-text-2)', sh: on ? 'var(--pk-shadow-1)' : 'none', pick: () => this.setState({ pay: k }) };
+    });
+    const f = st.f;
+    const errs = st.showErr ? this.validate(f) : {};
+    const n = Object.keys(errs).length;
+    const B = (k) => errs[k] ? 'var(--pk-rose)' : 'var(--pk-border-strong)';
+    const e = { ...errs, numberB: B('number'), emailB: B('email'), firstB: B('first'), amountB: B('amount'), termB: B('term'), numberInv: !!errs.number, emailInv: !!errs.email, amountInv: !!errs.amount };
+    const setF = (k) => (ev) => this.setState(s => ({ f: { ...s.f, [k]: ev.target.value } }));
+    const payOpts = [['salary', 'Salary', 'Annual amount / periods per year'], ['hourly', 'Hourly', 'Rate × timesheet hours']].map(([k, label, desc]) => {
+      const on = f.pay === k;
+      return { label, desc, on: on ? 'true' : 'false', border: on ? 'var(--pk-primary-fg)' : 'var(--pk-border-strong)', bg: on ? 'var(--pk-primary-soft)' : 'var(--pk-surface)', dot: on ? 'var(--pk-primary-fg)' : 'transparent', pick: () => this.setState(s => ({ f: { ...s.f, pay: k } })) };
+    });
+    const doImport = () => this.setState({ imp: 'errors', drag: false });
+    return {
+      isList: view === 'employees', isEdit: view === 'employee', isImport: view === 'import',
+      goImport: () => go('import'), goNew: () => go('employee'), goList: () => go('employees'), goDeductions: () => go('deductions'),
+      q: st.q, setQ: (ev) => this.setState({ q: ev.target.value }), payTypes,
+      active: st.active, setActive: (ev) => this.setState({ active: ev.target.value }),
+      countLabel: ls === 'ready' ? `${rows.length} of 6` : '',
+      rows, showTable: ls === 'ready' && rows.length > 0, loading: ls === 'loading', emptyAll: ls === 'empty', emptyFiltered: ls === 'ready' && rows.length === 0,
+      clearFilters: () => this.setState({ q: '', pay: 'all', active: 'active' }),
+      skel: ['60%', '72%', '54%', '66%', '58%', '70%'],
+      f: { ...f, activeStr: f.active ? 'true' : 'false' }, e, hasErrors: n > 0, errorCount: n === 1 ? '1 field needs attention.' : `${n} fields need attention.`,
+      set: { number: setF('number'), email: setF('email'), first: setF('first'), last: setF('last'), hire: setF('hire'), term: setF('term'), ot: setF('ot'), amount: setF(f.pay === 'salary' ? 'salary' : 'rate') },
+      amountLabel: f.pay === 'salary' ? 'Annual salary' : 'Hourly rate', amountVal: f.pay === 'salary' ? f.salary : f.rate,
+      payOpts,
+      sw: { bg: f.active ? 'var(--pk-primary)' : 'var(--pk-border-strong)', just: f.active ? 'flex-end' : 'flex-start', label: f.active ? 'Active' : 'Inactive' },
+      toggleActive: () => this.setState(s => ({ f: { ...s.f, active: !s.f.active } })),
+      save: () => { const er = this.validate(f); if (Object.keys(er).length) this.setState({ showErr: true }); else { this.setState({ showErr: false }); p.onToast?.('success', `Saved ${f.number} ${f.first} ${f.last}`, 'PATCH /api/employees/1/ · 200'); } },
+      tryDelete: () => this.setState({ conflict: true }), dismissConflict: () => this.setState({ conflict: false }), conflict: st.conflict,
+      deactivate: () => { this.setState(s => ({ conflict: false, f: { ...s.f, active: false } })); p.onToast?.('info', 'Marked inactive. Save to apply.'); },
+      assigned: [
+        { code: 'RET', name: 'Retirement 5%', kind: 'pre-tax', value: '5.00 %' },
+        { code: 'HEALTH', name: 'Health plan', kind: 'pre-tax', value: '120.00' },
+        { code: 'MATCH', name: 'Employer retirement match', kind: 'benefit', value: '3.00 %' },
+      ],
+      imp: { idle: st.imp === 'idle', errors: st.imp === 'errors', success: st.imp === 'success', hasFile: st.imp !== 'idle' },
+      dz: { border: st.drag ? 'var(--pk-primary-fg)' : 'var(--pk-border-strong)', bg: st.drag ? 'var(--pk-primary-soft)' : 'var(--pk-surface)', title: st.drag ? 'Drop to validate new-hires.csv' : 'Drag a CSV file here' },
+      upload: doImport, uploadKey: (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); doImport(); } },
+      dragOver: (ev) => { ev.preventDefault(); if (!st.drag) this.setState({ drag: true }); }, dragLeave: () => this.setState({ drag: false }),
+      drop: (ev) => { ev.preventDefault(); doImport(); },
+      reset: () => this.setState({ imp: 'idle' }), actor: 'demo_admin',
+      template: () => p.onToast?.('success', 'Downloaded employees-template.csv'),
+      reqCols: ['employee_number', 'first_name', 'last_name', 'email', 'pay_type'],
+      rowErrors: [
+        { row: 3, error: 'duplicate employee_number A1', fix: 'A1 already appears on row 2. Give each person a unique number.' },
+        { row: 5, error: 'hourly_rate must be > 0 for hourly employees', fix: 'Add an hourly_rate, or set pay_type to salary.' },
+        { row: 8, error: 'pay_type must be salary or hourly', fix: 'Found "contractor". Contractors are not supported.' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

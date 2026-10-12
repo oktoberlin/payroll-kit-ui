@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.452.0/font/lucide.css">
+<style>
+html,body{margin:0;height:100%}
+[data-pk-theme]{--pk-sans:"IBM Plex Sans",system-ui,sans-serif;--pk-mono:"IBM Plex Mono",ui-monospace,monospace;--pk-side-bg:#0f1424;--pk-side-hover:#182038;--pk-side-active:#252e52;--pk-side-text:#c3c9dc;--pk-side-muted:#8a93ad;--pk-side-border:#1e2539;--pk-side-accent:#a5b0fc}
+[data-pk-theme="light"]{color-scheme:light;--pk-bg:#eef1f6;--pk-surface:#ffffff;--pk-surface-2:#f6f7fa;--pk-hover:#f1f3f8;--pk-border:#e1e5ed;--pk-border-strong:#c8cfdc;--pk-text:#131a2a;--pk-text-2:#475167;--pk-text-3:#5f6980;--pk-primary:#4338ca;--pk-primary-hover:#3730a3;--pk-primary-fg:#4338ca;--pk-primary-soft:#eceefe;--pk-primary-soft-fg:#3730a3;--pk-chart-2:#b4bbf6;--pk-amber:#d97706;--pk-amber-soft:#fdf3dc;--pk-amber-fg:#8a4a03;--pk-emerald:#059669;--pk-emerald-soft:#e3f5ec;--pk-emerald-fg:#05603f;--pk-rose:#e11d48;--pk-rose-soft:#fdeaee;--pk-rose-fg:#a8183a;--pk-focus:#4f46e5;--pk-overlay:rgba(15,20,36,.40);--pk-inverse:#131a2a;--pk-inverse-fg:#f3f5fa;--pk-skeleton:#e4e8ef;--pk-shadow-1:0 1px 2px rgba(19,26,42,.05);--pk-shadow-2:0 6px 16px -4px rgba(19,26,42,.12),0 1px 3px rgba(19,26,42,.06);--pk-shadow-3:0 24px 48px -12px rgba(19,26,42,.30),0 2px 6px rgba(19,26,42,.08)}
+[data-pk-theme="dark"]{color-scheme:dark;--pk-side-bg:#0b0f1d;--pk-side-border:#1a2034;--pk-bg:#080b15;--pk-surface:#10152a;--pk-surface-2:#141a30;--pk-hover:#19203a;--pk-border:#222a43;--pk-border-strong:#343d5c;--pk-text:#e7eaf3;--pk-text-2:#aeb5c9;--pk-text-3:#8f98b0;--pk-primary:#5048e5;--pk-primary-hover:#6259f2;--pk-primary-fg:#a5b0fc;--pk-primary-soft:#1d2152;--pk-primary-soft-fg:#c6ccff;--pk-chart-2:#3a418f;--pk-amber:#f0a32a;--pk-amber-soft:#2c210c;--pk-amber-fg:#f8c46a;--pk-emerald:#2fc28a;--pk-emerald-soft:#0b2a1f;--pk-emerald-fg:#6fe2b2;--pk-rose:#f2557a;--pk-rose-soft:#331522;--pk-rose-fg:#fc9db3;--pk-focus:#8b93ff;--pk-overlay:rgba(2,4,10,.62);--pk-inverse:#e7eaf3;--pk-inverse-fg:#10152a;--pk-skeleton:#1c2339;--pk-shadow-1:0 1px 2px rgba(0,0,0,.4);--pk-shadow-2:0 8px 20px -6px rgba(0,0,0,.6),0 1px 3px rgba(0,0,0,.4);--pk-shadow-3:0 28px 56px -12px rgba(0,0,0,.75),0 2px 8px rgba(0,0,0,.5)}
+[data-pk-theme] *{box-sizing:border-box}
+[data-pk-theme] button,[data-pk-theme] input,[data-pk-theme] select,[data-pk-theme] textarea{font:inherit;color:inherit}
+[data-pk-theme] :focus-visible{outline:2px solid var(--pk-focus);outline-offset:2px}
+[data-pk-theme] [aria-disabled="true"]{opacity:.45;cursor:not-allowed!important}
+[data-pk-theme] ::placeholder{color:var(--pk-text-3);opacity:1}
+[data-pk-theme] [class^="icon-"],[data-pk-theme] [class*=" icon-"]{line-height:1;display:inline-block}
+@keyframes pkPulse{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes pkIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes pkSlide{from{opacity:0;transform:translateX(32px)}to{opacity:1;transform:none}}
+a{color:var(--pk-primary-fg)}a:hover{color:var(--pk-primary-hover)}
+</style>
+</helmet>
+<div ref="{{ rootRef }}" data-pk-theme="{{ theme }}" style="position:relative;height:{{ shellH }};overflow:hidden;background:var(--pk-bg);color:var(--pk-text);font-family:var(--pk-sans);font-size:13px;line-height:1.45;-webkit-font-smoothing:antialiased">
+
+<sc-if value="{{ isLogin }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:{{ loginCols }};height:100%;overflow:auto">
+  <sc-if value="{{ wide }}">
+  <aside style="background:var(--pk-side-bg);color:var(--pk-side-text);padding:40px 48px;display:flex;flex-direction:column;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="width:30px;height:30px;border-radius:7px;background:#4338ca;color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;letter-spacing:.02em">PK</span>
+      <span style="font-size:16px;font-weight:600;color:#fff">PayrollKit</span>
+    </div>
+    <div style="max-width:420px">
+      <p style="margin:0 0 12px;font-size:28px;line-height:36px;font-weight:600;color:#fff;letter-spacing:-.01em;text-wrap:pretty">Payroll runs, payslips and approvals, accurate to the cent.</p>
+      <p style="margin:0;color:var(--pk-side-muted);font-size:14px;text-wrap:pretty">Every run is calculated from hashed inputs, approved by an admin, and locked once paid. Every change lands in the audit log.</p>
+    </div>
+    <div style="display:flex;gap:16px;font-size:12px;color:var(--pk-side-muted)">
+      <span style="display:flex;align-items:center;gap:6px"><i class="icon-building-2"></i>Northwind Demo Co</span>
+      <span style="display:flex;align-items:center;gap:6px"><i class="icon-rotate-ccw"></i>Demo resets nightly at 03:00 UTC</span>
+    </div>
+  </aside>
+  </sc-if>
+  <div style="display:flex;align-items:center;justify-content:center;padding:{{ loginPad }}">
+    <div style="width:100%;max-width:420px;display:flex;flex-direction:column;gap:20px">
+      <sc-if value="{{ compact }}">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="width:30px;height:30px;border-radius:7px;background:#4338ca;color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px">PK</span>
+        <span style="font-size:16px;font-weight:600">PayrollKit</span>
+      </div>
+      </sc-if>
+      <div>
+        <h1 style="margin:0;font-size:22px;line-height:28px;font-weight:600">Sign in</h1>
+        <p style="margin:4px 0 0;color:var(--pk-text-2)">Northwind Demo Co · payroll admin</p>
+      </div>
+      <div role="note" style="display:flex;gap:10px;padding:10px 12px;border-radius:8px;background:var(--pk-amber-soft);color:var(--pk-amber-fg);border:1px solid color-mix(in oklab,var(--pk-amber) 30%,transparent)">
+        <i class="icon-flask-conical" style="font-size:16px;margin-top:1px"></i>
+        <div><strong style="font-weight:600">All data is fake.</strong> This is a demo tenant. Names, salaries and tax tables are made up.</div>
+      </div>
+      <form onSubmit="{{ submitLogin }}" style="display:flex;flex-direction:column;gap:12px">
+        <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Username
+          <input value="{{ loginUser }}" onChange="{{ setLoginUser }}" autocomplete="username" placeholder="demo_admin" style="height:36px;padding:0 10px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:400">
+        </label>
+        <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Password
+          <input type="password" value="{{ loginPass }}" onChange="{{ setLoginPass }}" autocomplete="current-password" style="height:36px;padding:0 10px;border-radius:6px;border:1px solid {{ loginBorder }};background:var(--pk-surface);font-weight:400">
+          <sc-if value="{{ loginErr }}"><span role="alert" style="display:flex;align-items:center;gap:6px;color:var(--pk-rose-fg);font-weight:400;font-size:12px"><i class="icon-circle-alert"></i>{{ loginErr }}</span></sc-if>
+        </label>
+        <button type="submit" style="height:36px;border-radius:6px;border:0;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-primary-hover)">Sign in</button>
+      </form>
+      <div style="display:flex;align-items:center;gap:10px;color:var(--pk-text-3);font-size:12px"><span style="flex:1;height:1px;background:var(--pk-border)"></span>or use a demo account<span style="flex:1;height:1px;background:var(--pk-border)"></span></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ demoAccounts }}" as="a" hint-placeholder-count="3">
+        <button onClick="{{ a.signIn }}" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:8px;border:1px solid var(--pk-border);background:var(--pk-surface);text-align:left;cursor:pointer;box-shadow:var(--pk-shadow-1)" style-hover="border-color:var(--pk-primary-fg);background:var(--pk-hover)">
+          <span style="width:36px;height:36px;flex:none;border-radius:8px;background:var(--pk-primary-soft);color:var(--pk-primary-soft-fg);display:grid;place-items:center"><i class="{{ a.icon }}" style="font-size:17px"></i></span>
+          <span style="flex:1;min-width:0;display:flex;flex-direction:column">
+            <span style="font-weight:600">Sign in as <span style="font-family:var(--pk-mono);font-weight:500">{{ a.user }}</span></span>
+            <span style="color:var(--pk-text-2);font-size:12px">{{ a.role }} · {{ a.desc }}</span>
+          </span>
+          <i class="icon-arrow-right" style="color:var(--pk-text-3)"></i>
+        </button>
+        </sc-for>
+      </div>
+      <p style="margin:0;color:var(--pk-text-3);font-size:12px">Password for all demo accounts: <span style="font-family:var(--pk-mono);color:var(--pk-text-2)">demo-pass-123</span></p>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ inApp }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;height:100%">
+  <sc-if value="{{ wide }}">
+  <nav aria-label="Main" style="width:{{ sideW }};flex:none;background:var(--pk-side-bg);border-right:1px solid var(--pk-side-border);display:flex;flex-direction:column;color:var(--pk-side-text);transition:width .18s">
+    <div style="height:52px;display:flex;align-items:center;gap:10px;padding:0 15px;border-bottom:1px solid var(--pk-side-border)">
+      <span style="width:28px;height:28px;flex:none;border-radius:7px;background:#4338ca;color:#fff;display:grid;place-items:center;font-weight:700;font-size:12px">PK</span>
+      <sc-if value="{{ expanded }}"><span style="font-size:15px;font-weight:600;color:#fff">PayrollKit</span></sc-if>
+    </div>
+    <div style="flex:1;overflow:auto;padding:12px 10px;display:flex;flex-direction:column;gap:14px">
+      <sc-for list="{{ nav }}" as="g" hint-placeholder-count="4">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <sc-if value="{{ expanded }}"><div style="padding:0 10px 4px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--pk-side-muted)">{{ g.label }}</div></sc-if>
+        <sc-for list="{{ g.items }}" as="it">
+        <button onClick="{{ it.go }}" title="{{ it.label }}" aria-current="{{ it.current }}" style="display:flex;align-items:center;gap:10px;height:34px;padding:0 10px;border-radius:6px;border:0;width:100%;text-align:left;font-size:13px;font-weight:500;cursor:pointer;background:{{ it.bg }};color:{{ it.fg }};justify-content:{{ navJustify }};white-space:nowrap" style-hover="background:var(--pk-side-hover);color:#fff">
+          <i class="{{ it.icon }}" style="font-size:16px;color:{{ it.iconFg }}"></i>
+          <sc-if value="{{ expanded }}"><span style="flex:1">{{ it.label }}</span></sc-if>
+          <sc-if value="{{ it.badgeShow }}"><span style="font-family:var(--pk-mono);font-size:11px;padding:1px 6px;border-radius:999px;background:#3a2a0b;color:#f8c46a">{{ it.badge }}</span></sc-if>
+        </button>
+        </sc-for>
+      </div>
+      </sc-for>
+    </div>
+    <div style="padding:10px;border-top:1px solid var(--pk-side-border)">
+      <button onClick="{{ toggleCollapse }}" aria-label="Collapse sidebar" style="display:flex;align-items:center;gap:10px;height:32px;padding:0 10px;width:100%;border-radius:6px;border:0;background:transparent;color:var(--pk-side-muted);cursor:pointer;justify-content:{{ navJustify }};white-space:nowrap" style-hover="background:var(--pk-side-hover);color:#fff">
+        <i class="{{ collapseIcon }}" style="font-size:16px"></i>
+        <sc-if value="{{ expanded }}"><span>Collapse</span><span style="margin-left:auto;font-family:var(--pk-mono);font-size:11px;opacity:.8">[</span></sc-if>
+      </button>
+    </div>
+  </nav>
+  </sc-if>
+
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <header style="height:52px;flex:none;display:flex;align-items:center;gap:12px;padding:0 {{ hPad }};background:var(--pk-surface);border-bottom:1px solid var(--pk-border)">
+      <sc-if value="{{ compact }}">
+        <button onClick="{{ openNav }}" aria-label="Open menu" style="width:36px;height:36px;display:grid;place-items:center;border-radius:6px;border:1px solid var(--pk-border);background:var(--pk-surface);cursor:pointer;white-space:nowrap"><i class="icon-menu" style="font-size:17px"></i></button>
+      </sc-if>
+      <button title="Switch company" style="display:flex;align-items:center;gap:8px;height:32px;padding:0 10px 0 8px;border-radius:6px;border:1px solid var(--pk-border);background:var(--pk-surface-2);cursor:pointer;min-width:0;white-space:nowrap" style-hover="border-color:var(--pk-border-strong)">
+        <span style="width:20px;height:20px;border-radius:5px;background:var(--pk-primary-soft);color:var(--pk-primary-soft-fg);display:grid;place-items:center;font-size:10px;font-weight:700;flex:none">N</span>
+        <span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ companyLabel }}</span>
+        <span style="font-family:var(--pk-mono);font-size:11px;color:var(--pk-text-3)">USD</span>
+        <i class="icon-chevrons-up-down" style="color:var(--pk-text-3)"></i>
+      </button>
+      <sc-if value="{{ wide }}">
+      <ol aria-label="Breadcrumb" style="display:flex;align-items:center;gap:6px;margin:0;padding:0 0 0 4px;list-style:none;flex:1;min-width:0;overflow:hidden;color:var(--pk-text-2)">
+        <sc-for list="{{ crumbs }}" as="c">
+        <li style="display:flex;align-items:center;gap:6px;white-space:nowrap;min-width:0">
+          <i class="icon-chevron-right" style="color:var(--pk-text-3);font-size:13px"></i>
+          <sc-if value="{{ c.link }}"><button onClick="{{ c.go }}" style="border:0;background:none;padding:2px 4px;border-radius:4px;cursor:pointer;color:var(--pk-text-2)" style-hover="color:var(--pk-text);background:var(--pk-hover)">{{ c.label }}</button></sc-if>
+          <sc-if value="{{ c.last }}"><span aria-current="page" style="color:var(--pk-text);font-weight:500;padding:2px 4px;overflow:hidden;text-overflow:ellipsis">{{ c.label }}</span></sc-if>
+        </li>
+        </sc-for>
+      </ol>
+      </sc-if>
+      <div style="margin-left:auto;flex:none;display:flex;align-items:center;gap:8px">
+        <sc-if value="{{ wide }}"><span style="display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 8px;border-radius:999px;border:1px dashed var(--pk-border-strong);color:var(--pk-text-2);font-size:12px;white-space:nowrap"><i class="icon-flask-conical"></i>Fake data</span></sc-if>
+        <button onClick="{{ toggleTheme }}" aria-label="{{ themeLabel }}" title="{{ themeLabel }}" style="width:32px;height:32px;display:grid;place-items:center;border-radius:6px;border:1px solid var(--pk-border);background:var(--pk-surface);cursor:pointer;color:var(--pk-text-2);white-space:nowrap" style-hover="background:var(--pk-hover);color:var(--pk-text)"><i class="{{ themeIcon }}" style="font-size:15px"></i></button>
+        <div style="position:relative">
+          <button onClick="{{ toggleUserMenu }}" aria-haspopup="menu" aria-expanded="{{ userMenu }}" style="display:flex;align-items:center;gap:8px;height:32px;padding:0 8px 0 4px;border-radius:6px;border:1px solid var(--pk-border);background:var(--pk-surface);cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-hover)">
+            <span style="width:24px;height:24px;border-radius:50%;background:var(--pk-inverse);color:var(--pk-inverse-fg);display:grid;place-items:center;font-size:10px;font-weight:600">{{ me.initials }}</span>
+            <sc-if value="{{ wide }}"><span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.1"><span style="font-family:var(--pk-mono);font-size:12px;font-weight:500">{{ me.user }}</span><span style="font-size:11px;color:var(--pk-text-3)">{{ me.role }}</span></span></sc-if>
+            <i class="icon-chevron-down" style="color:var(--pk-text-3)"></i>
+          </button>
+          <sc-if value="{{ userMenu }}">
+          <div role="menu" style="position:absolute;right:0;top:38px;z-index:30;width:248px;background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:8px;box-shadow:var(--pk-shadow-3);padding:6px;animation:pkIn .14s ease-out">
+            <div style="padding:8px 10px 10px;border-bottom:1px solid var(--pk-border);margin-bottom:6px">
+              <div style="font-family:var(--pk-mono);font-weight:500">{{ me.user }}</div>
+              <div style="color:var(--pk-text-3);font-size:12px">{{ me.role }} · Northwind Demo Co</div>
+            </div>
+            <div style="padding:4px 10px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--pk-text-3)">Switch demo account</div>
+            <sc-for list="{{ demoAccounts }}" as="a">
+            <button role="menuitem" onClick="{{ a.signIn }}" style="display:flex;align-items:center;gap:8px;width:100%;height:32px;padding:0 10px;border:0;border-radius:5px;background:transparent;cursor:pointer;text-align:left;white-space:nowrap" style-hover="background:var(--pk-hover)"><i class="{{ a.icon }}" style="color:var(--pk-text-3)"></i><span style="font-family:var(--pk-mono);font-size:12px">{{ a.user }}</span><span style="margin-left:auto;color:var(--pk-text-3);font-size:11px">{{ a.role }}</span></button>
+            </sc-for>
+            <div style="height:1px;background:var(--pk-border);margin:6px 0"></div>
+            <button role="menuitem" onClick="{{ expireSession }}" style="display:flex;align-items:center;gap:8px;width:100%;height:32px;padding:0 10px;border:0;border-radius:5px;background:transparent;cursor:pointer;text-align:left;white-space:nowrap" style-hover="background:var(--pk-hover)"><i class="icon-timer-off" style="color:var(--pk-text-3)"></i>Simulate session expiry</button>
+            <button role="menuitem" onClick="{{ signOut }}" style="display:flex;align-items:center;gap:8px;width:100%;height:32px;padding:0 10px;border:0;border-radius:5px;background:transparent;cursor:pointer;text-align:left;white-space:nowrap" style-hover="background:var(--pk-hover)"><i class="icon-log-out" style="color:var(--pk-text-3)"></i>Sign out</button>
+          </div>
+          </sc-if>
+        </div>
+      </div>
+    </header>
+
+    <main ref="{{ mainRef }}" style="flex:1;min-height:0;overflow:auto">
+      <div style="padding:{{ pagePad }};max-width:1320px;margin:0 auto">
+
+      <sc-if value="{{ s.dashboard }}">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+          <div>
+            <h1 style="margin:0;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.01em">Dashboard</h1>
+            <p style="margin:2px 0 0;color:var(--pk-text-2)">Northwind Demo Co · monthly payroll · USD</p>
+          </div>
+          <button onClick="{{ goRun }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-primary-hover)">Open Sep 2026 run<i class="icon-arrow-right"></i></button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+          <div style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;padding:14px 16px;box-shadow:var(--pk-shadow-1)">
+            <div style="display:flex;align-items:center;gap:6px;color:var(--pk-text-2);font-size:12px"><i class="icon-calendar-range"></i>Current pay period</div>
+            <div style="margin-top:8px;font-size:22px;font-weight:600">Sep 2026</div>
+            <div style="margin-top:2px;font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-3)">2026-09-01 → 2026-09-30</div>
+          </div>
+          <div style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;padding:14px 16px;box-shadow:var(--pk-shadow-1)">
+            <div style="display:flex;align-items:center;gap:6px;color:var(--pk-text-2);font-size:12px"><i class="icon-calendar-check"></i>Next pay date</div>
+            <div style="margin-top:8px;font-size:22px;font-weight:600;font-family:var(--pk-mono);font-variant-numeric:tabular-nums">2026-10-01</div>
+            <div style="margin-top:2px;font-size:12px;color:var(--pk-text-3)">Thursday · monthly, 12 periods / year</div>
+          </div>
+          <div style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;padding:14px 16px;box-shadow:var(--pk-shadow-1)">
+            <div style="display:flex;align-items:center;gap:6px;color:var(--pk-text-2);font-size:12px"><i class="icon-users"></i>Headcount</div>
+            <div style="margin-top:8px;font-size:22px;font-weight:600;font-family:var(--pk-mono)">6</div>
+            <div style="margin-top:2px;font-size:12px;color:var(--pk-text-3)">3 salaried · 3 hourly · all active</div>
+          </div>
+          <div style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;padding:14px 16px;box-shadow:var(--pk-shadow-1)">
+            <div style="display:flex;align-items:center;gap:6px;color:var(--pk-text-2);font-size:12px"><i class="icon-wallet"></i>Latest run status</div>
+            <div style="margin-top:10px;display:flex;align-items:center;gap:8px">
+              <span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 8px 0 7px;border-radius:999px;font-size:12px;font-weight:500;background:{{ runPill.bg }};color:{{ runPill.fg }};white-space:nowrap"><span style="width:6px;height:6px;border-radius:50%;background:{{ runPill.dot }}"></span>{{ runPill.label }}<sc-if value="{{ runPill.lock }}"><i class="icon-lock" style="font-size:11px"></i></sc-if></span>
+              <sc-if value="{{ stale }}"><span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--pk-amber-fg)"><i class="icon-triangle-alert"></i>Needs recalculation</span></sc-if>
+            </div>
+            <div style="margin-top:8px;font-size:12px;color:var(--pk-text-3)">{{ runMetaShort }}</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:12px">
+          <section style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;box-shadow:var(--pk-shadow-1);display:flex;flex-direction:column">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 0">
+              <h2 style="margin:0;font-size:14px;font-weight:600">Latest run totals</h2>
+              <span style="font-size:12px;color:var(--pk-text-3)">Sep 2026 · 6 payslips</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px 16px">
+              <div><div style="font-size:12px;color:var(--pk-text-2)">Total gross ($)</div><div style="margin-top:4px;font-family:var(--pk-mono);font-size:24px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.02em">30,265.25</div></div>
+              <div><div style="font-size:12px;color:var(--pk-text-2)">Total net ($)</div><div style="margin-top:4px;font-family:var(--pk-mono);font-size:24px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:var(--pk-primary-fg)">24,770.68</div></div>
+            </div>
+            <dl style="margin:0;padding:4px 16px 14px;display:grid;grid-template-columns:1fr auto;row-gap:0;font-size:13px">
+              <dt style="padding:7px 0;border-top:1px solid var(--pk-border);color:var(--pk-text-2)">Pre-tax deductions</dt><dd style="margin:0;padding:7px 0;border-top:1px solid var(--pk-border);font-family:var(--pk-mono);text-align:right">2,233.26</dd>
+              <dt style="padding:7px 0;border-top:1px solid var(--pk-border);color:var(--pk-text-2)">Tax <span style="color:var(--pk-text-3)">(illustrative)</span></dt><dd style="margin:0;padding:7px 0;border-top:1px solid var(--pk-border);font-family:var(--pk-mono);text-align:right">3,211.31</dd>
+              <dt style="padding:7px 0;border-top:1px solid var(--pk-border);color:var(--pk-text-2)">Post-tax deductions</dt><dd style="margin:0;padding:7px 0;border-top:1px solid var(--pk-border);font-family:var(--pk-mono);text-align:right">50.00</dd>
+              <dt style="padding:7px 0;border-top:1px solid var(--pk-border);color:var(--pk-text-3)">Employer benefits · not deducted</dt><dd style="margin:0;padding:7px 0;border-top:1px solid var(--pk-border);font-family:var(--pk-mono);text-align:right;color:var(--pk-text-3)">907.96</dd>
+            </dl>
+          </section>
+          <section style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;box-shadow:var(--pk-shadow-1);padding:14px 16px">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+              <div>
+                <h2 style="margin:0;font-size:14px;font-weight:600">Payroll cost by employee</h2>
+                <p style="margin:2px 0 0;font-size:12px;color:var(--pk-text-3)">Gross pay + employer benefits, Sep 2026 ($)</p>
+              </div>
+              <div style="display:flex;gap:12px;font-size:12px;color:var(--pk-text-2)">
+                <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--pk-primary)"></span>Gross</span>
+                <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--pk-chart-2)"></span>Employer benefits</span>
+              </div>
+            </div>
+            <div role="list" style="margin-top:14px;display:flex;flex-direction:column;gap:9px">
+              <sc-for list="{{ costBars }}" as="b" hint-placeholder-count="6">
+              <div role="listitem" title="{{ b.title }}" style="display:grid;grid-template-columns:96px 1fr 76px;align-items:center;gap:10px">
+                <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--pk-text-2)">{{ b.name }}</span>
+                <span style="display:flex;height:14px;border-radius:3px;overflow:hidden;background:var(--pk-surface-2)"><span style="width:{{ b.gw }};background:var(--pk-primary)"></span><span style="width:{{ b.bw }};background:var(--pk-chart-2)"></span></span>
+                <span style="font-family:var(--pk-mono);font-variant-numeric:tabular-nums;text-align:right;font-size:12px">{{ b.cost }}</span>
+              </div>
+              </sc-for>
+            </div>
+          </section>
+        </div>
+        <section style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;box-shadow:var(--pk-shadow-1)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--pk-border)">
+            <h2 style="margin:0;font-size:14px;font-weight:600">Recent audit events</h2>
+            <sc-if value="{{ isAdmin }}"><button onClick="{{ goAudit }}" style="border:0;background:none;color:var(--pk-primary-fg);font-weight:500;cursor:pointer;display:flex;align-items:center;gap:4px">View audit log<i class="icon-arrow-right"></i></button></sc-if>
+          </div>
+          <ul style="margin:0;padding:0;list-style:none">
+            <sc-for list="{{ recentAudit }}" as="e" hint-placeholder-count="5">
+            <li style="display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 16px;border-bottom:1px solid var(--pk-border)">
+              <span style="width:24px;height:24px;border-radius:6px;background:var(--pk-surface-2);border:1px solid var(--pk-border);display:grid;place-items:center;color:var(--pk-text-2)"><i class="{{ e.icon }}" style="font-size:13px"></i></span>
+              <span style="min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="font-family:var(--pk-mono);font-size:12px">{{ e.actor }}</span> <span style="color:var(--pk-text-2)">{{ e.verb }}</span> <span style="font-weight:500">{{ e.object }}</span></span>
+              <span style="font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-3)">{{ e.time }}</span>
+            </li>
+            </sc-for>
+          </ul>
+        </section>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ s.runs }}">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+          <div>
+            <h1 style="margin:0;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.01em">Payroll runs</h1>
+            <p style="margin:2px 0 0;color:var(--pk-text-2)">One run per pay period. Draft → Approved → Paid.</p>
+          </div>
+          <button onClick="{{ openNewRun }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-primary-hover)"><i class="icon-plus"></i>New run</button>
+        </div>
+        <div style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;box-shadow:var(--pk-shadow-1)">
+          <sc-if value="{{ listReady }}">
+          <div style="overflow:auto;border-radius:10px">
+          <table style="width:100%;border-collapse:separate;border-spacing:0;font-size:13px">
+            <thead><tr>
+              <th style="position:sticky;top:0;z-index:1;background:var(--pk-surface-2);height:34px;padding:0 12px 0 16px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Period</th>
+              <th style="position:sticky;top:0;z-index:1;background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Pay date</th>
+              <th style="position:sticky;top:0;z-index:1;background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Status</th>
+              <th style="position:sticky;top:0;z-index:1;background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:right;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Payslips</th>
+              <th style="position:sticky;top:0;z-index:1;background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Calculated at</th>
+              <th style="position:sticky;top:0;z-index:1;background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:right;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Net total ($)</th>
+              <th style="position:sticky;top:0;z-index:1;background:var(--pk-surface-2);height:34px;width:48px;border-bottom:1px solid var(--pk-border);white-space:nowrap"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Actions</span></th>
+            </tr></thead>
+            <tbody>
+              <sc-for list="{{ runs }}" as="r" hint-placeholder-count="3">
+              <tr tabindex="0" onClick="{{ r.open }}" onKeyDown="{{ r.key }}" style="cursor:pointer" style-hover="background:var(--pk-hover)">
+                <td style="height:40px;padding:0 12px 0 16px;border-bottom:1px solid var(--pk-border);white-space:nowrap"><span style="font-weight:500">{{ r.period }}</span> <span style="margin-left:6px;font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-3)">{{ r.range }}</span></td>
+                <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);font-variant-numeric:tabular-nums;white-space:nowrap">{{ r.payDate }}</td>
+                <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border)"><span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 8px 0 7px;border-radius:999px;font-size:12px;font-weight:500;white-space:nowrap;background:{{ r.pill.bg }};color:{{ r.pill.fg }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ r.pill.dot }}"></span>{{ r.pill.label }}<sc-if value="{{ r.pill.lock }}"><i class="icon-lock" style="font-size:11px"></i></sc-if></span></td>
+                <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);text-align:right;white-space:nowrap">{{ r.slips }}</td>
+                <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-2);white-space:nowrap">{{ r.calc }}</td>
+                <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);font-variant-numeric:tabular-nums;text-align:right;font-weight:500;white-space:nowrap">{{ r.net }}</td>
+                <td style="height:40px;padding:0 8px;border-bottom:1px solid var(--pk-border);text-align:right;position:relative">
+                  <button onClick="{{ r.menu }}" aria-label="Row actions" aria-haspopup="menu" style="width:28px;height:28px;border-radius:5px;border:1px solid transparent;background:transparent;cursor:pointer;color:var(--pk-text-2);display:inline-grid;place-items:center;white-space:nowrap" style-hover="background:var(--pk-surface-2);border-color:var(--pk-border)"><i class="icon-ellipsis" style="font-size:15px"></i></button>
+                  <sc-if value="{{ r.menuOpen }}">
+                  <div role="menu" style="position:absolute;right:8px;top:36px;z-index:20;width:200px;text-align:left;background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:8px;box-shadow:var(--pk-shadow-3);padding:4px;animation:pkIn .12s ease-out">
+                    <button role="menuitem" onClick="{{ r.open }}" style="display:flex;align-items:center;gap:8px;width:100%;height:30px;padding:0 8px;border:0;border-radius:5px;background:transparent;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-hover)"><i class="icon-eye" style="color:var(--pk-text-3)"></i>Open run</button>
+                    <button role="menuitem" onClick="{{ r.export }}" style="display:flex;align-items:center;gap:8px;width:100%;height:30px;padding:0 8px;border:0;border-radius:5px;background:transparent;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-hover)"><i class="icon-file-spreadsheet" style="color:var(--pk-text-3)"></i>Export CSV register</button>
+                    <div style="height:1px;background:var(--pk-border);margin:4px 0"></div>
+                    <button role="menuitem" aria-disabled="{{ r.delDisabled }}" title="{{ r.delTitle }}" onClick="{{ r.del }}" style="display:flex;align-items:center;gap:8px;width:100%;height:30px;padding:0 8px;border:0;border-radius:5px;background:transparent;cursor:pointer;color:var(--pk-rose-fg);white-space:nowrap" style-hover="background:var(--pk-rose-soft)"><i class="icon-trash-2"></i>Delete draft</button>
+                  </div>
+                  </sc-if>
+                </td>
+              </tr>
+              </sc-for>
+            </tbody>
+          </table>
+          </div>
+          </sc-if>
+          <sc-if value="{{ listLoading }}">
+          <div aria-busy="true" aria-label="Loading payroll runs">
+            <div style="height:34px;background:var(--pk-surface-2);border-bottom:1px solid var(--pk-border);border-radius:10px 10px 0 0"></div>
+            <sc-for list="{{ skeletonRows }}" as="k">
+            <div style="height:40px;display:grid;grid-template-columns:2fr 1fr 1fr .6fr 1.2fr 1fr 40px;gap:16px;align-items:center;padding:0 16px;border-bottom:1px solid var(--pk-border)">
+              <span style="height:10px;border-radius:4px;background:var(--pk-skeleton);width:{{ k.w1 }};animation:pkPulse 1.4s ease-in-out infinite"></span>
+              <span style="height:10px;border-radius:4px;background:var(--pk-skeleton);width:70%;animation:pkPulse 1.4s ease-in-out infinite"></span>
+              <span style="height:18px;border-radius:999px;background:var(--pk-skeleton);width:64px;animation:pkPulse 1.4s ease-in-out infinite"></span>
+              <span style="height:10px;border-radius:4px;background:var(--pk-skeleton);width:24px;justify-self:end;animation:pkPulse 1.4s ease-in-out infinite"></span>
+              <span style="height:10px;border-radius:4px;background:var(--pk-skeleton);width:80%;animation:pkPulse 1.4s ease-in-out infinite"></span>
+              <span style="height:10px;border-radius:4px;background:var(--pk-skeleton);width:{{ k.w2 }};justify-self:end;animation:pkPulse 1.4s ease-in-out infinite"></span>
+              <span></span>
+            </div>
+            </sc-for>
+          </div>
+          </sc-if>
+          <sc-if value="{{ listEmpty }}">
+          <div style="padding:56px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px">
+            <span style="width:44px;height:44px;border-radius:10px;background:var(--pk-primary-soft);color:var(--pk-primary-soft-fg);display:grid;place-items:center;margin-bottom:6px"><i class="icon-wallet" style="font-size:20px"></i></span>
+            <h2 style="margin:0;font-size:15px;font-weight:600">No payroll runs yet</h2>
+            <p style="margin:0 0 10px;color:var(--pk-text-2);max-width:380px;text-wrap:pretty">Create a run for a pay period, then calculate it to generate a payslip for every active employee.</p>
+            <button onClick="{{ openNewRun }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap"><i class="icon-plus"></i>New run</button>
+          </div>
+          </sc-if>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ s.run }}">
+        <dc-import name="PkRun" role="{{ role }}" status="{{ runStatus }}" stale="{{ stale }}" slips="{{ slips }}" compact="{{ compact }}" selected="{{ openSlip }}" approved-line="{{ approvedLine }}" paid-line="{{ paidLine }}" calc-line="{{ calcLine }}" on-open="{{ openSlipFn }}" on-calculate="{{ calculate }}" on-ask="{{ ask }}" on-export="{{ exportCsv }}" hint-size="100%,720px"></dc-import>
+      </sc-if>
+
+      <sc-if value="{{ s.people }}">
+        <dc-import name="PkPeople" view="{{ screen }}" variant="{{ variant }}" list-state="{{ listState }}" compact="{{ compact }}" go="{{ goFn }}" on-toast="{{ toast }}" hint-size="100%,640px"></dc-import>
+      </sc-if>
+
+      <sc-if value="{{ s.setup }}">
+        <dc-import name="PkSetup" view="{{ screen }}" variant="{{ variant }}" list-state="{{ listState }}" run-status="{{ runStatus }}" go="{{ goFn }}" on-toast="{{ toast }}" on-inputs-changed="{{ inputsChanged }}" hint-size="100%,640px"></dc-import>
+      </sc-if>
+
+      <sc-if value="{{ s.audit }}">
+        <dc-import name="PkAudit" list-state="{{ listState }}" variant="{{ variant }}" events="{{ audit }}" on-toast="{{ toast }}" hint-size="100%,640px"></dc-import>
+      </sc-if>
+
+      <sc-if value="{{ s.forbidden }}">
+      <div style="min-height:60vh;display:grid;place-items:center">
+        <div style="max-width:440px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px">
+          <span style="width:52px;height:52px;border-radius:12px;background:var(--pk-rose-soft);color:var(--pk-rose-fg);display:grid;place-items:center;margin-bottom:6px"><i class="icon-shield-x" style="font-size:24px"></i></span>
+          <span style="font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-3)">403 · Forbidden</span>
+          <h1 style="margin:0;font-size:22px;font-weight:600">You do not have access</h1>
+          <p style="margin:0 0 10px;color:var(--pk-text-2);text-wrap:pretty">The audit log is available to admins only. You are signed in as <span style="font-family:var(--pk-mono)">{{ me.user }}</span> ({{ me.role }}).</p>
+          <div style="display:flex;gap:8px">
+            <button onClick="{{ goHome }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap">Back to dashboard</button>
+            <button onClick="{{ adminSignIn }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap">Sign in as admin</button>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ s.my }}">
+      <div style="max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
+        <sc-if value="{{ myList }}">
+        <div>
+          <h1 style="margin:0;font-size:24px;line-height:30px;font-weight:600;letter-spacing:-.01em">Hi Dev</h1>
+          <p style="margin:2px 0 0;color:var(--pk-text-2)">Your payslips from Northwind Demo Co.</p>
+        </div>
+        <section style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:12px;box-shadow:var(--pk-shadow-1);padding:20px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:8px"><span style="font-weight:600">Latest payslip · Aug 2026</span>
+              <span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 8px 0 7px;border-radius:999px;font-size:12px;font-weight:500;background:var(--pk-emerald-soft);color:var(--pk-emerald-fg);white-space:nowrap"><span style="width:6px;height:6px;border-radius:50%;background:var(--pk-emerald)"></span>Paid<i class="icon-lock" style="font-size:11px"></i></span>
+            </div>
+            <span style="font-size:12px;color:var(--pk-text-3)">Paid on <span style="font-family:var(--pk-mono)">2026-09-01</span></span>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--pk-text-2)">Net pay ($)</div>
+            <div style="font-family:var(--pk-mono);font-size:36px;line-height:44px;font-weight:500;letter-spacing:-.02em;font-variant-numeric:tabular-nums">3,193.29</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+            <div style="padding:10px;border-radius:8px;background:var(--pk-surface-2)"><div style="font-size:12px;color:var(--pk-text-2)">Gross</div><div style="font-family:var(--pk-mono)">3,802.50</div></div>
+            <div style="padding:10px;border-radius:8px;background:var(--pk-surface-2)"><div style="font-size:12px;color:var(--pk-text-2)">Tax</div><div style="font-family:var(--pk-mono)">299.08</div></div>
+            <div style="padding:10px;border-radius:8px;background:var(--pk-surface-2)"><div style="font-size:12px;color:var(--pk-text-2)">Deductions</div><div style="font-family:var(--pk-mono)">310.13</div></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button onClick="{{ pdf }}" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;height:40px;padding:0 14px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;flex:1 1 160px" style-hover="background:var(--pk-primary-hover)"><i class="icon-download"></i>Download PDF</button>
+            <button onClick="{{ openAug }}" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;height:40px;padding:0 14px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;flex:1 1 160px" style-hover="background:var(--pk-hover)">View details</button>
+          </div>
+        </section>
+        <section>
+          <h2 style="margin:0 0 8px;font-size:14px;font-weight:600">All payslips</h2>
+          <sc-if value="{{ myReady }}">
+          <ul style="margin:0;padding:0;list-style:none;background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:12px;overflow:hidden">
+            <sc-for list="{{ myPayslips }}" as="m" hint-placeholder-count="4">
+            <li style="border-bottom:1px solid var(--pk-border)">
+              <div style="display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 8px 8px 16px">
+                <button onClick="{{ m.open }}" aria-disabled="{{ m.notReady }}" style="flex:1;min-width:0;display:flex;align-items:center;gap:12px;border:0;background:transparent;text-align:left;cursor:pointer;padding:4px 0">
+                  <span style="flex:1;min-width:0;display:flex;flex-direction:column">
+                    <span style="font-weight:500">{{ m.period }}</span>
+                    <span style="font-size:12px;color:var(--pk-text-3)">{{ m.sub }}</span>
+                  </span>
+                  <span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 8px 0 7px;border-radius:999px;font-size:12px;font-weight:500;white-space:nowrap;background:{{ m.pill.bg }};color:{{ m.pill.fg }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ m.pill.dot }}"></span>{{ m.pill.label }}<sc-if value="{{ m.pill.lock }}"><i class="icon-lock" style="font-size:11px"></i></sc-if></span>
+                  <span style="font-family:var(--pk-mono);font-variant-numeric:tabular-nums;font-weight:500;min-width:72px;text-align:right">{{ m.net }}</span>
+                </button>
+                <button onClick="{{ pdf }}" aria-label="{{ m.pdfLabel }}" aria-disabled="{{ m.notReady }}" title="{{ m.pdfLabel }}" style="width:44px;height:44px;flex:none;border-radius:8px;border:1px solid var(--pk-border);background:var(--pk-surface);cursor:pointer;display:grid;place-items:center;color:var(--pk-text-2)" style-hover="background:var(--pk-hover)"><i class="icon-file-down" style="font-size:16px"></i></button>
+              </div>
+            </li>
+            </sc-for>
+          </ul>
+          </sc-if>
+          <sc-if value="{{ listLoading }}">
+          <div aria-busy="true" style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:12px;overflow:hidden">
+            <sc-for list="{{ skeletonRows }}" as="k">
+            <div style="height:56px;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid var(--pk-border)"><span style="height:10px;border-radius:4px;background:var(--pk-skeleton);width:{{ k.w1 }};animation:pkPulse 1.4s ease-in-out infinite"></span><span style="margin-left:auto;height:10px;width:64px;border-radius:4px;background:var(--pk-skeleton);animation:pkPulse 1.4s ease-in-out infinite"></span></div>
+            </sc-for>
+          </div>
+          </sc-if>
+          <sc-if value="{{ listEmpty }}">
+          <div style="padding:40px 20px;text-align:center;background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:6px">
+            <span style="width:44px;height:44px;border-radius:10px;background:var(--pk-primary-soft);color:var(--pk-primary-soft-fg);display:grid;place-items:center;margin-bottom:6px"><i class="icon-file-text" style="font-size:20px"></i></span>
+            <h3 style="margin:0;font-size:15px;font-weight:600">No payslips yet</h3>
+            <p style="margin:0;color:var(--pk-text-2);max-width:340px">Your first payslip appears here once a payroll run that includes you is approved.</p>
+          </div>
+          </sc-if>
+        </section>
+        </sc-if>
+        <sc-if value="{{ myDetail }}">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <button onClick="{{ closeMy }}" style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px 0 6px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--pk-text-2);cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-hover)"><i class="icon-arrow-left"></i>All payslips</button>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <div>
+              <h1 style="margin:0;font-size:22px;font-weight:600">{{ mySlip.period }} payslip</h1>
+              <p style="margin:2px 0 0;color:var(--pk-text-2)">Paid <span style="font-family:var(--pk-mono)">{{ mySlip.payDate }}</span> · <span style="font-family:var(--pk-mono)">E004</span> Dev Patel</p>
+            </div>
+            <button onClick="{{ pdf }}" style="display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 14px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer"><i class="icon-download"></i>Download PDF</button>
+          </div>
+          <div style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:12px;padding:20px">
+            <dc-import name="PkPayslip" slip="{{ mySlip }}" compact="{{ compact }}" hint-size="100%,560px"></dc-import>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      </div>
+    </main>
+    <sc-if value="{{ showTaxNote }}">
+    <footer style="flex:none;display:flex;align-items:center;gap:6px;height:30px;padding:0 {{ hPad }};border-top:1px solid var(--pk-border);background:var(--pk-surface);color:var(--pk-text-3);font-size:12px"><i class="icon-info"></i>Illustrative tax table. Not tax advice.</footer>
+    </sc-if>
+  </div>
+</div>
+
+<sc-if value="{{ navOpen }}">
+<div style="position:absolute;inset:0;z-index:40;background:var(--pk-overlay)" onClick="{{ closeNav }}"></div>
+<nav aria-label="Main" style="position:absolute;top:0;bottom:0;left:0;z-index:41;width:280px;max-width:86%;background:var(--pk-side-bg);color:var(--pk-side-text);display:flex;flex-direction:column;animation:pkIn .16s ease-out">
+  <div style="height:52px;display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:1px solid var(--pk-side-border)">
+    <span style="width:28px;height:28px;border-radius:7px;background:#4338ca;color:#fff;display:grid;place-items:center;font-weight:700;font-size:12px">PK</span>
+    <span style="font-size:15px;font-weight:600;color:#fff">PayrollKit</span>
+    <button onClick="{{ closeNav }}" aria-label="Close menu" style="margin-left:auto;width:36px;height:36px;border:0;border-radius:6px;background:transparent;color:var(--pk-side-text);cursor:pointer;white-space:nowrap"><i class="icon-x" style="font-size:18px"></i></button>
+  </div>
+  <div style="padding:12px 10px;display:flex;flex-direction:column;gap:14px;overflow:auto">
+    <sc-for list="{{ nav }}" as="g">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="padding:0 10px 4px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--pk-side-muted)">{{ g.label }}</div>
+      <sc-for list="{{ g.items }}" as="it">
+      <button onClick="{{ it.go }}" style="display:flex;align-items:center;gap:10px;height:44px;padding:0 12px;border-radius:6px;border:0;width:100%;text-align:left;font-size:14px;font-weight:500;cursor:pointer;background:{{ it.bg }};color:{{ it.fg }}"><i class="{{ it.icon }}" style="font-size:17px;color:{{ it.iconFg }}"></i>{{ it.label }}</button>
+      </sc-for>
+    </div>
+    </sc-for>
+  </div>
+</nav>
+</sc-if>
+
+<sc-if value="{{ drawerOpen }}">
+<div onClick="{{ closeSlip }}" style="position:absolute;inset:0;z-index:50;background:var(--pk-overlay)"></div>
+<aside role="dialog" aria-modal="true" aria-label="Payslip" style="position:absolute;top:0;right:0;bottom:0;z-index:51;width:{{ drawerW }};background:var(--pk-surface);border-left:1px solid var(--pk-border);box-shadow:var(--pk-shadow-3);display:flex;flex-direction:column;animation:pkSlide .18s ease-out">
+  <div style="padding:14px 16px 14px 20px;border-bottom:1px solid var(--pk-border);display:flex;align-items:flex-start;gap:12px">
+    <span style="width:40px;height:40px;flex:none;border-radius:50%;background:var(--pk-primary-soft);color:var(--pk-primary-soft-fg);display:grid;place-items:center;font-weight:600">{{ slip.initials }}</span>
+    <div style="flex:1;min-width:0">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><h2 style="margin:0;font-size:16px;font-weight:600">{{ slip.name }}</h2><span style="font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-3)">{{ slip.id }}</span></div>
+      <div style="font-size:12px;color:var(--pk-text-2)">{{ slip.rate }} · Sep 2026 · pay date <span style="font-family:var(--pk-mono)">2026-10-01</span></div>
+    </div>
+    <span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 8px 0 7px;border-radius:999px;font-size:12px;font-weight:500;white-space:nowrap;background:{{ runPill.bg }};color:{{ runPill.fg }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ runPill.dot }}"></span>{{ runPill.label }}<sc-if value="{{ runPill.lock }}"><i class="icon-lock" style="font-size:11px"></i></sc-if></span>
+    <button onClick="{{ closeSlip }}" aria-label="Close payslip" style="width:32px;height:32px;flex:none;border-radius:6px;border:1px solid var(--pk-border);background:var(--pk-surface);cursor:pointer;display:grid;place-items:center;color:var(--pk-text-2);white-space:nowrap"><i class="icon-x" style="font-size:16px"></i></button>
+  </div>
+  <div style="flex:1;overflow:auto;padding:20px">
+    <dc-import name="PkPayslip" slip="{{ slip }}" compact="{{ compact }}" hint-size="100%,640px"></dc-import>
+  </div>
+  <div style="padding:12px 20px;border-top:1px solid var(--pk-border);display:flex;gap:8px;align-items:center">
+    <span style="font-size:12px;color:var(--pk-text-3);display:flex;align-items:center;gap:6px"><i class="icon-keyboard"></i><span style="font-family:var(--pk-mono)">↑ ↓</span> next employee · <span style="font-family:var(--pk-mono)">Esc</span> close</span>
+    <button onClick="{{ pdf }}" style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-primary-hover)"><i class="icon-download"></i>Download PDF</button>
+  </div>
+</aside>
+</sc-if>
+
+<sc-if value="{{ confirmOpen }}">
+<div style="position:absolute;inset:0;z-index:60;background:var(--pk-overlay);display:grid;place-items:center;padding:16px">
+  <div role="alertdialog" aria-modal="true" aria-labelledby="pk-confirm-title" style="width:100%;max-width:440px;background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:12px;box-shadow:var(--pk-shadow-3);animation:pkIn .16s ease-out">
+    <div style="padding:20px 20px 16px;display:flex;gap:14px">
+      <span style="width:36px;height:36px;flex:none;border-radius:9px;display:grid;place-items:center;background:{{ dlg.iconBg }};color:{{ dlg.iconFg }}"><i class="{{ dlg.icon }}" style="font-size:18px"></i></span>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <h2 id="pk-confirm-title" style="margin:0;font-size:16px;font-weight:600">{{ dlg.title }}</h2>
+        <p style="margin:0;color:var(--pk-text-2);text-wrap:pretty">{{ dlg.body }}</p>
+        <div style="margin-top:6px;padding:8px 10px;border-radius:6px;background:var(--pk-surface-2);border:1px solid var(--pk-border);display:flex;align-items:center;gap:8px;font-weight:500"><i class="icon-info" style="color:var(--pk-text-3)"></i>{{ dlg.consequence }}</div>
+        <sc-if value="{{ dlg.needsCheck }}">
+        <label style="margin-top:6px;display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" checked="{{ dlgChecked }}" onChange="{{ toggleDlgCheck }}" style="width:16px;height:16px;accent-color:var(--pk-primary)">I have confirmed the bank transfer for <span style="font-family:var(--pk-mono)">$24,770.68</span></label>
+        </sc-if>
+      </div>
+    </div>
+    <div style="padding:12px 20px;border-top:1px solid var(--pk-border);display:flex;justify-content:flex-end;gap:8px;background:var(--pk-surface-2);border-radius:0 0 12px 12px">
+      <button onClick="{{ closeConfirm }}" style="height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap">Cancel</button>
+      <button onClick="{{ doConfirm }}" aria-disabled="{{ dlgBlocked }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap"><i class="{{ dlg.icon }}"></i>{{ dlg.cta }}</button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ newRunOpen }}">
+<div style="position:absolute;inset:0;z-index:60;background:var(--pk-overlay);display:grid;place-items:center;padding:16px">
+  <div role="dialog" aria-modal="true" aria-label="New payroll run" style="width:100%;max-width:420px;background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:12px;box-shadow:var(--pk-shadow-3);animation:pkIn .16s ease-out">
+    <div style="padding:18px 20px 6px"><h2 style="margin:0;font-size:16px;font-weight:600">New payroll run</h2><p style="margin:4px 0 0;color:var(--pk-text-2)">Pick the pay period. The run starts as a draft with no payslips.</p></div>
+    <div style="padding:12px 20px 18px;display:flex;flex-direction:column;gap:8px">
+      <sc-for list="{{ periodChoices }}" as="p">
+      <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid {{ p.border }};background:{{ p.bg }};cursor:{{ p.cursor }}">
+        <input type="radio" name="pk-period" checked="{{ p.checked }}" disabled="{{ p.taken }}" onChange="{{ p.pick }}" style="accent-color:var(--pk-primary)">
+        <span style="flex:1;display:flex;flex-direction:column"><span style="font-weight:500">{{ p.label }}</span><span style="font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-3)">{{ p.range }} · pay {{ p.pay }}</span></span>
+        <span style="font-size:12px;color:var(--pk-text-3)">{{ p.note }}</span>
+      </label>
+      </sc-for>
+    </div>
+    <div style="padding:12px 20px;border-top:1px solid var(--pk-border);display:flex;justify-content:flex-end;gap:8px;background:var(--pk-surface-2);border-radius:0 0 12px 12px">
+      <button onClick="{{ closeNewRun }}" style="height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap">Cancel</button>
+      <button onClick="{{ createRun }}" style="height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap">Create draft run</button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ session }}">
+<div style="position:absolute;inset:0;z-index:70;background:var(--pk-overlay);backdrop-filter:blur(3px);display:grid;place-items:center;padding:16px">
+  <div role="alertdialog" aria-modal="true" aria-label="Session expired" style="width:100%;max-width:400px;background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:12px;box-shadow:var(--pk-shadow-3);padding:24px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;animation:pkIn .16s ease-out">
+    <span style="width:44px;height:44px;border-radius:10px;background:var(--pk-amber-soft);color:var(--pk-amber-fg);display:grid;place-items:center;margin-bottom:4px"><i class="icon-timer-off" style="font-size:20px"></i></span>
+    <h2 style="margin:0;font-size:17px;font-weight:600">Your session has expired</h2>
+    <p style="margin:0 0 8px;color:var(--pk-text-2);text-wrap:pretty">For security you were signed out after 30 minutes without activity. Sign in again to continue where you left off.</p>
+    <button onClick="{{ resumeSession }}" style="width:100%;height:36px;border-radius:6px;border:0;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap">Sign in again as <span style="font-family:var(--pk-mono)">{{ me.user }}</span></button>
+    <button onClick="{{ signOut }}" style="width:100%;height:36px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap">Use a different account</button>
+  </div>
+</div>
+</sc-if>
+
+<div aria-live="polite" style="position:absolute;right:16px;bottom:44px;z-index:80;display:flex;flex-direction:column;gap:8px;align-items:flex-end;pointer-events:none;max-width:calc(100% - 32px)">
+  <sc-for list="{{ toasts }}" as="t">
+  <div role="status" style="pointer-events:auto;display:flex;align-items:flex-start;gap:10px;min-width:280px;max-width:400px;padding:10px 10px 10px 12px;border-radius:8px;background:var(--pk-inverse);color:var(--pk-inverse-fg);box-shadow:var(--pk-shadow-3);animation:pkIn .18s ease-out">
+    <i class="{{ t.icon }}" style="font-size:16px;margin-top:1px;color:{{ t.color }}"></i>
+    <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-weight:500">{{ t.text }}</span><sc-if value="{{ t.sub }}"><span style="font-family:var(--pk-mono);font-size:11.5px;opacity:.72">{{ t.sub }}</span></sc-if></div>
+    <button onClick="{{ t.close }}" aria-label="Dismiss" style="border:0;background:transparent;color:inherit;opacity:.7;cursor:pointer;padding:2px"><i class="icon-x"></i></button>
+  </div>
+  </sc-for>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light'|'dark'&quot;},&quot;role&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;admin&quot;,&quot;manager&quot;,&quot;employee&quot;],&quot;default&quot;:&quot;admin&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;login&quot;,&quot;dashboard&quot;,&quot;runs&quot;,&quot;run&quot;,&quot;employees&quot;,&quot;employee&quot;,&quot;import&quot;,&quot;periods&quot;,&quot;timesheets&quot;,&quot;deductions&quot;,&quot;tax&quot;,&quot;audit&quot;,&quot;myPayslips&quot;,&quot;forbidden&quot;,&quot;session&quot;],&quot;default&quot;:&quot;dashboard&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;runState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;draft&quot;,&quot;stale&quot;,&quot;approved&quot;,&quot;paid&quot;],&quot;default&quot;:&quot;draft&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;listState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;ready&quot;,&quot;loading&quot;,&quot;empty&quot;],&quot;default&quot;:&quot;ready&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;collapsed&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;variant&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;frameHeight&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  rootRef = React.createRef();
+  mainRef = React.createRef();
+  tid = 0;
+  state = this.fromProps(this.props);
+
+  fromProps(p) {
+    const role = p.role ?? 'admin';
+    let screen = p.screen ?? 'dashboard';
+    const session = screen === 'session';
+    if (session) screen = role === 'employee' ? 'myPayslips' : 'dashboard';
+    if (role === 'employee' && !['login', 'myPayslips'].includes(screen)) screen = 'myPayslips';
+    if (role !== 'admin' && screen === 'audit') screen = 'forbidden';
+    const rs = p.runState ?? 'draft';
+    const v = p.variant ?? '';
+    return {
+      theme: p.theme ?? 'light', role, screen, session,
+      runStatus: rs === 'stale' ? 'draft' : rs, stale: rs === 'stale',
+      collapsed: !!p.collapsed, toasts: [], compact: this.state ? this.state.compact : false,
+      navOpen: false, userMenu: false, newRunOpen: false, newRunPick: 'oct', extraRun: false, menuRow: null,
+      openSlip: v === 'drawer' ? 'E001' : null,
+      confirm: v === 'confirm-approve' ? 'approve' : v === 'confirm-paid' ? 'paid' : null, dlgChecked: false,
+      myOpen: v === 'detail' ? 'aug' : null,
+      loginUser: '', loginPass: '', loginErr: v === 'login-error' ? 'Incorrect username or password.' : '',
+    };
+  }
+
+  componentDidMount() {
+    const el = this.rootRef.current;
+    if (el && window.ResizeObserver) {
+      this.ro = new ResizeObserver(([e]) => {
+        const c = e.contentRect.width < 760;
+        if (c !== this.state.compact) this.setState({ compact: c });
+      });
+      this.ro.observe(el);
+    }
+    this.onKey = (e) => {
+      if (e.key === 'Escape') this.setState({ openSlip: null, confirm: null, userMenu: false, menuRow: null, newRunOpen: false, navOpen: false });
+      if (this.state.openSlip && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+        const ids = this.SLIPS.map(s => s[0]);
+        const i = ids.indexOf(this.state.openSlip);
+        const n = e.key === 'ArrowDown' ? Math.min(ids.length - 1, i + 1) : Math.max(0, i - 1);
+        this.setState({ openSlip: ids[n] }); e.preventDefault();
+      }
+      if (e.key === '[' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || '')) this.setState(s => ({ collapsed: !s.collapsed }));
+    };
+    if (!this.props.frameHeight) window.addEventListener('keydown', this.onKey);
+  }
+  componentWillUnmount() { this.ro?.disconnect(); window.removeEventListener('keydown', this.onKey); }
+  componentDidUpdate(prev) {
+    const keys = ['theme', 'role', 'screen', 'runState', 'collapsed', 'variant'];
+    if (keys.some(k => prev[k] !== this.props[k])) this.setState(this.fromProps(this.props));
+  }
+
+  // [id, name, payType label, earnings, pre, tax, post, benefits, totals[g,pre,taxable,tax,post,net,ben], ytd[g,t,n]]
+  SLIPS = [
+    ['E001', 'Ava Stone', 'Salary · 72,000.00 / yr', [['SALARY', 'Salary', '6,000.00']], [['RET', 'Retirement 5%', '300.00'], ['HEALTH', 'Health plan', '120.00']], '690.93', [], [['MATCH', 'Employer retirement match', '180.00']], ['6,000.00', '420.00', '5,580.00', '690.93', '0.00', '4,889.07', '180.00'], ['54,000.00', '6,218.37', '44,001.63'], 6180],
+    ['E002', 'Ben Carter', 'Salary · 54,000.00 / yr', [['SALARY', 'Salary', '4,500.00']], [['RET', 'Retirement 5%', '225.00'], ['HEALTH', 'Health plan', '120.00']], '378.60', [['LOAN', 'Salary advance repayment', '50.00']], [['MATCH', 'Employer retirement match', '135.00']], ['4,500.00', '345.00', '4,155.00', '378.60', '50.00', '3,726.40', '135.00'], ['40,500.00', '3,407.40', '33,537.60'], 4635],
+    ['E003', 'Chloe Diaz', 'Salary · 96,000.00 / yr', [['SALARY', 'Salary', '8,000.00']], [['RET', 'Retirement 5%', '400.00'], ['HEALTH', 'Health plan', '120.00']], '1,108.93', [], [['MATCH', 'Employer retirement match', '240.00']], ['8,000.00', '520.00', '7,480.00', '1,108.93', '0.00', '6,371.07', '240.00'], ['72,000.00', '9,980.37', '57,339.63'], 8240],
+    ['E004', 'Dev Patel', 'Hourly · 22.50 / h', [['REGULAR', 'Regular 160h @ 22.50', '3,600.00'], ['OVERTIME', 'Overtime 12h @ 33.75', '405.00']], [['RET', 'Retirement 5%', '200.25'], ['HEALTH', 'Health plan', '120.00']], '322.17', [], [['MATCH', 'Employer retirement match', '120.15']], ['4,005.00', '320.25', '3,684.75', '322.17', '0.00', '3,362.58', '120.15'], ['34,218.75', '2,709.96', '28,834.11'], 4125.15],
+    ['E005', 'Ella Moore', 'Hourly · 18.75 / h', [['REGULAR', 'Regular 120h @ 18.75', '2,250.00']], [['RET', 'Retirement 5%', '112.50'], ['HEALTH', 'Health plan', '120.00']], '122.10', [], [['MATCH', 'Employer retirement match', '67.50']], ['2,250.00', '232.50', '2,017.50', '122.10', '0.00', '1,895.40', '67.50'], ['20,250.00', '1,098.90', '17,058.60'], 2317.5],
+    ['E006', 'Finn Lee', 'Hourly · 31.00 / h', [['REGULAR', 'Regular 168h @ 31.00', '5,208.00'], ['OVERTIME', 'Overtime 6.5h @ 46.50', '302.25']], [['RET', 'Retirement 5%', '275.51'], ['HEALTH', 'Health plan', '120.00']], '588.58', [], [['MATCH', 'Employer retirement match', '165.31']], ['5,510.25', '395.51', '5,114.74', '588.58', '0.00', '4,526.16', '165.31'], ['49,592.25', '5,297.22', '40,735.44'], 5675.56],
+  ];
+  MY = {
+    sep: { period: 'Sep 2026', payDate: '2026-10-01', status: 'draft', raw: null },
+    aug: { period: 'Aug 2026', payDate: '2026-09-01', status: 'paid', raw: ['E004', 'Dev Patel', 'Hourly · 22.50 / h', [['REGULAR', 'Regular 160h @ 22.50', '3,600.00'], ['OVERTIME', 'Overtime 6h @ 33.75', '202.50']], [['RET', 'Retirement 5%', '190.13'], ['HEALTH', 'Health plan', '120.00']], '299.08', [], [['MATCH', 'Employer retirement match', '114.08']], ['3,802.50', '310.13', '3,492.37', '299.08', '0.00', '3,193.29', '114.08'], ['30,213.75', '2,387.79', '25,471.53']] },
+    jul: { period: 'Jul 2026', payDate: '2026-08-03', status: 'paid', raw: ['E004', 'Dev Patel', 'Hourly · 22.50 / h', [['REGULAR', 'Regular 160h @ 22.50', '3,600.00'], ['OVERTIME', 'Overtime 12h @ 33.75', '405.00']], [['RET', 'Retirement 5%', '200.25'], ['HEALTH', 'Health plan', '120.00']], '322.17', [], [['MATCH', 'Employer retirement match', '120.15']], ['4,005.00', '320.25', '3,684.75', '322.17', '0.00', '3,362.58', '120.15'], ['26,411.25', '2,088.71', '22,278.24']] },
+    jun: { period: 'Jun 2026', payDate: '2026-07-01', status: 'paid', raw: ['E004', 'Dev Patel', 'Hourly · 22.50 / h', [['REGULAR', 'Regular 150h @ 22.50', '3,375.00'], ['OVERTIME', 'Overtime 4h @ 33.75', '135.00']], [['RET', 'Retirement 5%', '175.50'], ['HEALTH', 'Health plan', '120.00']], '265.74', [], [['MATCH', 'Employer retirement match', '105.30']], ['3,510.00', '295.50', '3,214.50', '265.74', '0.00', '2,948.76', '105.30'], ['22,406.25', '1,766.54', '18,915.66']] },
+  };
+  AUDIT = [
+    { time: '2026-10-12 09:58', actor: 'demo_manager', action: 'payroll_run.calculated', type: 'PayrollRun', oid: '3', verb: 'calculated', object: 'Sep 2026 run', icon: 'icon-calculator', diff: [['+', 'payslips', '6'], ['+', 'input_hash', '"9f2c41e07ab3…d81e"']] },
+    { time: '2026-10-12 09:40', actor: 'demo_manager', action: 'timesheet.updated', type: 'TimesheetEntry', oid: '18', verb: 'updated timesheet for', object: 'Finn Lee', icon: 'icon-clock', diff: [['-', 'overtime_hours', '"4.00"'], ['+', 'overtime_hours', '"6.50"']] },
+    { time: '2026-10-11 16:20', actor: 'demo_admin', action: 'employee.updated', type: 'Employee', oid: '2', verb: 'updated', object: 'E002 Ben Carter', icon: 'icon-user-pen', diff: [['-', 'email', '"ben.carter@example.com"'], ['+', 'email', '"ben@example.com"']] },
+    { time: '2026-10-11 16:02', actor: 'demo_admin', action: 'employee_deduction.created', type: 'EmployeeDeduction', oid: '19', verb: 'assigned LOAN to', object: 'E002 Ben Carter', icon: 'icon-percent', diff: [['+', 'employee', '"E002"'], ['+', 'deduction_type', '"LOAN"'], ['+', 'value', 'null']] },
+    { time: '2026-10-01 08:00', actor: 'demo_manager', action: 'payroll_run.created', type: 'PayrollRun', oid: '3', verb: 'created', object: 'Sep 2026 run', icon: 'icon-plus', diff: [['+', 'pay_period', '"2026-09-01 to 2026-09-30"'], ['+', 'status', '"draft"']] },
+    { time: '2026-09-01 11:05', actor: 'demo_admin', action: 'payroll_run.paid', type: 'PayrollRun', oid: '2', verb: 'marked paid', object: 'Aug 2026 run', icon: 'icon-lock', diff: [['-', 'status', '"approved"'], ['+', 'status', '"paid"'], ['+', 'paid_at', '"2026-09-01T11:05:12Z"']] },
+    { time: '2026-08-31 17:30', actor: 'demo_admin', action: 'payroll_run.approved', type: 'PayrollRun', oid: '2', verb: 'approved', object: 'Aug 2026 run', icon: 'icon-check', diff: [['-', 'status', '"draft"'], ['+', 'status', '"approved"'], ['+', 'approved_by', '"demo_admin"']] },
+    { time: '2026-08-31 15:12', actor: 'demo_manager', action: 'payroll_run.calculated', type: 'PayrollRun', oid: '2', verb: 'calculated', object: 'Aug 2026 run', icon: 'icon-calculator', diff: [['+', 'payslips', '6'], ['+', 'input_hash', '"41aa07c2e9f0…03b7"']] },
+    { time: '2026-01-05 09:00', actor: 'demo_admin', action: 'employees.imported', type: 'Company', oid: '1', verb: 'imported', object: '6 employees', icon: 'icon-upload', diff: [['+', 'count', '6']] },
+  ];
+
+  pill(st) {
+    if (st === 'paid') return { label: 'Paid', bg: 'var(--pk-emerald-soft)', fg: 'var(--pk-emerald-fg)', dot: 'var(--pk-emerald)', lock: true };
+    if (st === 'approved') return { label: 'Approved', bg: 'var(--pk-primary-soft)', fg: 'var(--pk-primary-soft-fg)', dot: 'var(--pk-primary-fg)', lock: false };
+    if (st === 'processing') return { label: 'Not final yet', bg: 'var(--pk-amber-soft)', fg: 'var(--pk-amber-fg)', dot: 'var(--pk-amber)', lock: false };
+    return { label: 'Draft', bg: 'var(--pk-amber-soft)', fg: 'var(--pk-amber-fg)', dot: 'var(--pk-amber)', lock: false };
+  }
+
+  buildSlip(r, period, payDate) {
+    const [id, name, rate, earn, pre, tax, post, ben, t, ytd] = r;
+    const L = a => a.map(([code, desc, amount]) => ({ code, desc, amount }));
+    const plain = { fg: 'var(--pk-text)', tag: '', empty: false, after: null };
+    return {
+      id, name, rate, period, payDate, initials: name.split(' ').map(x => x[0]).join(''),
+      gross: t[0], pre: t[1], taxable: t[2], tax: t[3], post: t[4], net: t[5], ben: t[6],
+      groups: [
+        { ...plain, title: 'Earnings', lines: L(earn), totalLabel: 'Gross pay', total: t[0] },
+        { ...plain, title: 'Pre-tax deductions', lines: L(pre), totalLabel: 'Total pre-tax', total: t[1], after: { label: 'Taxable pay', amount: t[2] } },
+        { ...plain, title: 'Tax', lines: [{ code: 'TAX', desc: 'Income tax (illustrative table)', amount: tax }], totalLabel: 'Total tax', total: t[3] },
+        { ...plain, title: 'Post-tax deductions', lines: L(post), empty: post.length === 0, totalLabel: 'Total post-tax', total: t[4] },
+        { ...plain, title: 'Employer benefits', lines: L(ben), fg: 'var(--pk-text-3)', tag: 'Not deducted', totalLabel: 'Paid by employer', total: t[6] },
+      ],
+      recon: [
+        { op: '', label: 'Gross pay', amount: t[0] },
+        { op: '−', label: 'Pre-tax deductions', amount: t[1] },
+        { op: '−', label: 'Tax', amount: t[3] },
+        { op: '−', label: 'Post-tax deductions', amount: t[4] },
+      ],
+      equation: `${t[0]} − ${t[1]} − ${t[3]} − ${t[4]} = ${t[5]}`,
+      ytd: [{ label: 'Gross', amount: ytd[0] }, { label: 'Tax', amount: ytd[1] }, { label: 'Net', amount: ytd[2] }],
+    };
+  }
+
+  go = (screen) => {
+    const role = this.state.role;
+    if (role !== 'admin' && screen === 'audit') screen = 'forbidden';
+    this.setState({ screen, navOpen: false, userMenu: false, menuRow: null, myOpen: null, openSlip: null });
+    if (this.mainRef.current) this.mainRef.current.scrollTop = 0;
+  };
+  toast = (kind, text, sub) => {
+    const id = ++this.tid;
+    this.setState(s => ({ toasts: [...s.toasts.slice(-2), { id, kind, text, sub }] }));
+    setTimeout(() => this.setState(s => ({ toasts: s.toasts.filter(t => t.id !== id) })), 4600);
+  };
+  signIn = (role) => this.setState({ role, screen: role === 'employee' ? 'myPayslips' : 'dashboard', userMenu: false, session: false, loginErr: '', myOpen: null, openSlip: null });
+
+  renderVals() {
+    const st = this.state;
+    const { role, screen, compact, runStatus, stale } = st;
+    const isAdmin = role === 'admin';
+    const people = { admin: { user: 'demo_admin', role: 'Admin', initials: 'DA' }, manager: { user: 'demo_manager', role: 'Payroll manager', initials: 'DM' }, employee: { user: 'demo_employee', role: 'Employee', initials: 'DP' } };
+    const me = people[role];
+    const titles = { dashboard: 'Dashboard', runs: 'Payroll runs', run: 'Sep 2026', employees: 'Employees', employee: 'E001 Ava Stone', import: 'Import CSV', periods: 'Pay periods', timesheets: 'Timesheets', deductions: 'Deductions & benefits', tax: 'Tax tables', audit: 'Audit log', forbidden: 'Audit log', myPayslips: 'My payslips' };
+    const parents = { run: ['runs'], employee: ['employees'], import: ['employees'] };
+    const crumbs = [...(parents[screen] || []).map(k => ({ label: titles[k], link: true, last: false, go: () => this.go(k) })), { label: titles[screen] || '', link: false, last: true }];
+
+    const navItem = (key, label, icon, extra = {}) => {
+      const active = screen === key || (parents[screen] || []).includes(key) || (key === 'audit' && screen === 'forbidden');
+      return { key, label, icon, current: active ? 'page' : undefined, bg: active ? 'var(--pk-side-active)' : 'transparent', fg: active ? '#fff' : 'var(--pk-side-text)', iconFg: active ? 'var(--pk-side-accent)' : 'var(--pk-side-muted)', go: () => this.go(key), badgeShow: false, ...extra };
+    };
+    const expanded = !st.collapsed;
+    let nav;
+    if (role === 'employee') nav = [{ label: 'Me', items: [navItem('myPayslips', 'My payslips', 'icon-file-text')] }];
+    else {
+      nav = [
+        { label: 'Overview', items: [navItem('dashboard', 'Dashboard', 'icon-layout-dashboard')] },
+        { label: 'Payroll', items: [navItem('runs', 'Payroll runs', 'icon-wallet', { badgeShow: expanded && runStatus === 'draft', badge: '1 draft' }), navItem('periods', 'Pay periods', 'icon-calendar-range'), navItem('timesheets', 'Timesheets', 'icon-clock')] },
+        { label: 'People', items: [navItem('employees', 'Employees', 'icon-users')] },
+        { label: 'Setup', items: [navItem('deductions', 'Deductions & benefits', 'icon-percent'), navItem('tax', 'Tax tables', 'icon-landmark')] },
+      ];
+      if (isAdmin) nav.push({ label: 'Admin', items: [navItem('audit', 'Audit log', 'icon-scroll-text')] });
+    }
+
+    const demoAccounts = [
+      { key: 'admin', user: 'demo_admin', role: 'Admin', desc: 'approve, reopen, mark paid, audit log', icon: 'icon-shield-check' },
+      { key: 'manager', user: 'demo_manager', role: 'Payroll manager', desc: 'employees, periods, timesheets, calculate', icon: 'icon-briefcase' },
+      { key: 'employee', user: 'demo_employee', role: 'Employee', desc: 'own payslips and PDFs (Dev Patel)', icon: 'icon-user' },
+    ].map(a => ({ ...a, signIn: () => this.signIn(a.key) }));
+
+    const runPill = this.pill(runStatus);
+    const slips = this.SLIPS.map(r => this.buildSlip(r, 'Sep 2026', '2026-10-01'));
+    const slipRaw = this.SLIPS.find(r => r[0] === st.openSlip);
+    const slip = slipRaw ? this.buildSlip(slipRaw, 'Sep 2026', '2026-10-01') : null;
+
+    const ls = this.props.listState ?? 'ready';
+    const runsData = [
+      ...(st.extraRun ? [{ id: 4, period: 'Oct 2026', range: '2026-10-01 → 2026-10-31', payDate: '2026-11-02', status: 'draft', slips: '0', calc: 'Not calculated', net: '—' }] : []),
+      { id: 3, period: 'Sep 2026', range: '2026-09-01 → 2026-09-30', payDate: '2026-10-01', status: runStatus, slips: '6', calc: stale ? '2026-10-12 09:58 · stale' : '2026-10-12 09:58', net: '24,770.68' },
+      { id: 2, period: 'Aug 2026', range: '2026-08-01 → 2026-08-31', payDate: '2026-09-01', status: 'paid', slips: '6', calc: '2026-08-31 15:12', net: '24,512.30' },
+      { id: 1, period: 'Jul 2026', range: '2026-07-01 → 2026-07-31', payDate: '2026-08-03', status: 'paid', slips: '6', calc: '2026-07-30 14:47', net: '24,618.94' },
+    ];
+    const runs = runsData.map(r => {
+      const open = (e) => { e?.stopPropagation(); if (r.id === 3) this.go('run'); else this.toast('info', `Demo: only the Sep 2026 run has payslip data`, `GET /api/payroll-runs/${r.id}/`); };
+      const delDisabled = r.status !== 'draft' ? 'true' : 'false';
+      return {
+        ...r, pill: this.pill(r.status), open, menuOpen: st.menuRow === r.id,
+        key: (e) => { if (e.key === 'Enter') open(e); },
+        menu: (e) => { e.stopPropagation(); this.setState(s => ({ menuRow: s.menuRow === r.id ? null : r.id })); },
+        export: (e) => { e.stopPropagation(); this.setState({ menuRow: null }); this.toast('success', `Exported payroll-register-${r.period.replace(' ', '-').toLowerCase()}.csv`, `${r.slips} rows · GET /api/payroll-runs/${r.id}/export/`); },
+        delDisabled, delTitle: r.status !== 'draft' ? 'Only draft runs can be deleted' : 'Delete this draft run',
+        del: (e) => { e.stopPropagation(); if (r.status !== 'draft') return; this.setState({ menuRow: null }); if (r.id === 4) { this.setState({ extraRun: false }); this.toast('success', 'Draft run deleted'); } else this.toast('error', 'Cannot delete, it is still in use', '409 · payslips reference this run. Use Reopen or recalculate instead.'); },
+      };
+    });
+
+    const maxCost = 8240;
+    const costBars = [...this.SLIPS].sort((a, b) => b[10] - a[10]).map(r => {
+      const g = parseFloat(r[8][0].replace(/,/g, '')), b = parseFloat(r[8][6].replace(/,/g, ''));
+      const cost = (g + b).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      return { name: r[1], gw: (g / maxCost * 100).toFixed(2) + '%', bw: (b / maxCost * 100).toFixed(2) + '%', cost, title: `${r[1]}: gross ${r[8][0]} + benefits ${r[8][6]} = ${cost}` };
+    });
+
+    const myItems = [
+      { key: 'sep', period: 'Sep 2026', sub: 'Pay date 2026-10-01 · being prepared', status: 'processing', net: '—', notReady: 'true' },
+      { key: 'aug', period: 'Aug 2026', sub: 'Paid 2026-09-01', status: 'paid', net: '3,193.29', notReady: 'false' },
+      { key: 'jul', period: 'Jul 2026', sub: 'Paid 2026-08-03', status: 'paid', net: '3,362.58', notReady: 'false' },
+      { key: 'jun', period: 'Jun 2026', sub: 'Paid 2026-07-01', status: 'paid', net: '2,948.76', notReady: 'false' },
+    ].map(m => ({ ...m, pill: this.pill(m.status), pdfLabel: `Download ${m.period} payslip PDF`, open: () => { if (m.notReady === 'true') this.toast('info', 'Your Sep 2026 payslip is not final yet', 'It appears once the run is approved'); else this.setState({ myOpen: m.key }); } }));
+    const myRec = st.myOpen ? this.MY[st.myOpen] : null;
+    const mySlip = myRec && myRec.raw ? this.buildSlip(myRec.raw, myRec.period, myRec.payDate) : null;
+
+    const dlgs = {
+      approve: { title: 'Approve Sep 2026 payroll?', body: '6 payslips totalling $24,770.68 net will be frozen for payment. Timesheets and deductions can still change, but this run will not pick them up unless an admin reopens it.', consequence: 'Approved runs are read-only until reopened.', cta: 'Approve run', icon: 'icon-check', iconBg: 'var(--pk-primary-soft)', iconFg: 'var(--pk-primary-soft-fg)', needsCheck: false },
+      paid: { title: 'Mark Sep 2026 as paid?', body: 'This records that $24,770.68 was paid to 6 employees on 2026-10-01 and releases payslip PDFs to them.', consequence: 'Paid runs cannot be changed. Not even by an admin.', cta: 'Mark paid', icon: 'icon-lock', iconBg: 'var(--pk-emerald-soft)', iconFg: 'var(--pk-emerald-fg)', needsCheck: true },
+      reopen: { title: 'Reopen as draft?', body: 'The approval by demo_admin will be cleared. The run can then be recalculated and must be approved again before payment.', consequence: 'Payslips stay as they are until you recalculate.', cta: 'Reopen run', icon: 'icon-rotate-ccw', iconBg: 'var(--pk-amber-soft)', iconFg: 'var(--pk-amber-fg)', needsCheck: false },
+    };
+    const dlg = st.confirm ? dlgs[st.confirm] : dlgs.approve;
+    const tIcons = { success: ['icon-circle-check', 'var(--pk-emerald)'], info: ['icon-info', 'var(--pk-primary-fg)'], error: ['icon-circle-alert', 'var(--pk-rose)'] };
+
+    const people_ = ['employees', 'employee', 'import'], setup = ['periods', 'timesheets', 'deductions', 'tax'];
+    const inApp = screen !== 'login';
+    const wide = !compact;
+    return {
+      rootRef: this.rootRef, mainRef: this.mainRef,
+      theme: st.theme, shellH: this.props.frameHeight ?? '100vh', compact, wide, role, screen, isAdmin, me,
+      variant: this.props.variant ?? '', listState: ls,
+      isLogin: screen === 'login', inApp,
+      loginCols: compact ? '1fr' : 'minmax(0,1fr) minmax(0,1.1fr)', loginPad: compact ? '24px 20px' : '40px',
+      loginUser: st.loginUser, loginPass: st.loginPass, loginErr: st.loginErr, loginBorder: st.loginErr ? 'var(--pk-rose)' : 'var(--pk-border-strong)',
+      setLoginUser: e => this.setState({ loginUser: e.target.value, loginErr: '' }),
+      setLoginPass: e => this.setState({ loginPass: e.target.value, loginErr: '' }),
+      submitLogin: e => { e.preventDefault(); const map = { demo_admin: 'admin', demo_manager: 'manager', demo_employee: 'employee' }; const r = map[st.loginUser.trim()]; if (r && st.loginPass === 'demo-pass-123') this.signIn(r); else this.setState({ loginErr: 'Incorrect username or password.' }); },
+      demoAccounts,
+      expanded, sideW: st.collapsed ? '60px' : '232px', navJustify: st.collapsed ? 'center' : 'flex-start', collapseIcon: st.collapsed ? 'icon-panel-left-open' : 'icon-panel-left-close',
+      toggleCollapse: () => this.setState(s => ({ collapsed: !s.collapsed })), nav,
+      hPad: compact ? '12px' : '20px', pagePad: compact ? '16px 12px 32px' : '24px 24px 40px',
+      companyLabel: compact ? 'Northwind' : 'Northwind Demo Co', crumbs,
+      themeIcon: st.theme === 'dark' ? 'icon-sun' : 'icon-moon', themeLabel: st.theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme',
+      toggleTheme: () => this.setState(s => ({ theme: s.theme === 'dark' ? 'light' : 'dark' })),
+      userMenu: st.userMenu, toggleUserMenu: () => this.setState(s => ({ userMenu: !s.userMenu })),
+      signOut: () => this.setState({ screen: 'login', userMenu: false, session: false, loginUser: '', loginPass: '' }),
+      expireSession: () => this.setState({ session: true, userMenu: false }),
+      resumeSession: () => this.setState({ session: false }),
+      session: st.session,
+      navOpen: st.navOpen, openNav: () => this.setState({ navOpen: true }), closeNav: () => this.setState({ navOpen: false }),
+      s: { dashboard: screen === 'dashboard', runs: screen === 'runs', run: screen === 'run', people: people_.includes(screen), setup: setup.includes(screen), audit: screen === 'audit', forbidden: screen === 'forbidden', my: screen === 'myPayslips' },
+      goFn: this.go, toast: this.toast,
+      goRun: () => this.go('run'), goAudit: () => this.go('audit'), goHome: () => this.go('dashboard'), adminSignIn: () => this.signIn('admin'),
+      runPill, stale, runStatus,
+      runMetaShort: runStatus === 'paid' ? 'Paid by demo_admin, 12 Oct 11:05' : runStatus === 'approved' ? 'Approved by demo_admin, 12 Oct 10:42' : 'Calculated by demo_manager, 12 Oct 09:58',
+      calcLine: 'Calculated by demo_manager, 12 Oct 09:58', approvedLine: 'Approved by demo_admin, 12 Oct 10:42', paidLine: 'Paid by demo_admin, 12 Oct 11:05',
+      costBars, recentAudit: this.AUDIT.slice(0, 5), audit: this.AUDIT,
+      listReady: ls === 'ready', listLoading: ls === 'loading', listEmpty: ls === 'empty',
+      skeletonRows: [{ w1: '62%', w2: '60%' }, { w1: '54%', w2: '72%' }, { w1: '68%', w2: '55%' }, { w1: '50%', w2: '66%' }, { w1: '58%', w2: '70%' }],
+      runs, openNewRun: () => this.setState({ newRunOpen: true }), closeNewRun: () => this.setState({ newRunOpen: false }), newRunOpen: st.newRunOpen,
+      periodChoices: [
+        { key: 'oct', label: 'Oct 2026', range: '2026-10-01 → 2026-10-31', pay: '2026-11-02', taken: st.extraRun, note: st.extraRun ? 'Run exists' : 'Monthly' },
+        { key: 'sep', label: 'Sep 2026', range: '2026-09-01 → 2026-09-30', pay: '2026-10-01', taken: true, note: 'Run exists' },
+      ].map(p => ({ ...p, checked: !p.taken && st.newRunPick === p.key, border: !p.taken && st.newRunPick === p.key ? 'var(--pk-primary-fg)' : 'var(--pk-border)', bg: p.taken ? 'var(--pk-surface-2)' : 'var(--pk-surface)', cursor: p.taken ? 'not-allowed' : 'pointer', pick: () => this.setState({ newRunPick: p.key }) })),
+      createRun: () => { if (st.extraRun) { this.setState({ newRunOpen: false }); this.toast('error', 'A run already exists for every open period', 'Create a new pay period first'); return; } this.setState({ newRunOpen: false, extraRun: true }); this.toast('success', 'Draft run created for Oct 2026', 'Calculate it to generate payslips'); },
+      slips, openSlip: st.openSlip, slip, drawerOpen: !!slip, drawerW: compact ? '100%' : '560px',
+      openSlipFn: (id) => this.setState({ openSlip: id }), closeSlip: () => this.setState({ openSlip: null }),
+      calculate: () => { if (st.stale) { this.setState({ stale: false }); this.toast('success', 'Recalculated 6 payslips', 'X-Recalculated: true'); } else this.toast('info', 'Nothing changed, no recalculation needed', 'X-Recalculated: false'); },
+      ask: (k) => this.setState({ confirm: k, dlgChecked: false }),
+      exportCsv: () => this.toast('success', 'Exported payroll-register-2026-09.csv', '6 rows · formula-safe CSV'),
+      inputsChanged: () => { if (runStatus === 'draft') this.setState({ stale: true }); },
+      confirmOpen: !!st.confirm, dlg, dlgChecked: st.dlgChecked, dlgBlocked: dlg.needsCheck && !st.dlgChecked ? 'true' : 'false',
+      toggleDlgCheck: () => this.setState(s => ({ dlgChecked: !s.dlgChecked })),
+      closeConfirm: () => this.setState({ confirm: null }),
+      doConfirm: () => {
+        const k = st.confirm;
+        if (dlg.needsCheck && !st.dlgChecked) return;
+        if (k === 'approve') { this.setState({ confirm: null, runStatus: 'approved' }); this.toast('success', 'Run approved', 'Approved by demo_admin, 12 Oct 10:42'); }
+        if (k === 'paid') { this.setState({ confirm: null, runStatus: 'paid' }); this.toast('success', 'Run marked paid and locked', 'Paid by demo_admin, 12 Oct 11:05'); }
+        if (k === 'reopen') { this.setState({ confirm: null, runStatus: 'draft' }); this.toast('info', 'Run reopened as draft', 'Approval cleared'); }
+      },
+      pdf: () => this.toast('success', 'Payslip PDF downloaded', 'GET /api/payslips/{id}/pdf/'),
+      myList: !st.myOpen, myDetail: !!mySlip, mySlip, myPayslips: myItems, myReady: ls === 'ready',
+      openAug: () => this.setState({ myOpen: 'aug' }), closeMy: () => this.setState({ myOpen: null }),
+      showTaxNote: ['dashboard', 'run', 'tax', 'myPayslips'].includes(screen),
+      toasts: st.toasts.map(t => ({ ...t, icon: tIcons[t.kind][0], color: tIcons[t.kind][1], close: () => this.setState(s => ({ toasts: s.toasts.filter(x => x.id !== t.id) })) })),
+    };
+  }
+}
+</script>
+</body>
+</html>

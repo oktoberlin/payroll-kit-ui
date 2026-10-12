@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.452.0/font/lucide.css">
+<style>
+html,body{margin:0}
+[data-pk-theme]{--pk-sans:"IBM Plex Sans",system-ui,sans-serif;--pk-mono:"IBM Plex Mono",ui-monospace,monospace;--pk-side-bg:#0f1424;--pk-side-hover:#182038;--pk-side-active:#252e52;--pk-side-text:#c3c9dc;--pk-side-muted:#8a93ad;--pk-side-border:#1e2539;--pk-side-accent:#a5b0fc}
+[data-pk-theme="light"]{color-scheme:light;--pk-bg:#eef1f6;--pk-surface:#ffffff;--pk-surface-2:#f6f7fa;--pk-hover:#f1f3f8;--pk-border:#e1e5ed;--pk-border-strong:#c8cfdc;--pk-text:#131a2a;--pk-text-2:#475167;--pk-text-3:#5f6980;--pk-primary:#4338ca;--pk-primary-hover:#3730a3;--pk-primary-fg:#4338ca;--pk-primary-soft:#eceefe;--pk-primary-soft-fg:#3730a3;--pk-chart-2:#b4bbf6;--pk-amber:#d97706;--pk-amber-soft:#fdf3dc;--pk-amber-fg:#8a4a03;--pk-emerald:#059669;--pk-emerald-soft:#e3f5ec;--pk-emerald-fg:#05603f;--pk-rose:#e11d48;--pk-rose-soft:#fdeaee;--pk-rose-fg:#a8183a;--pk-focus:#4f46e5;--pk-overlay:rgba(15,20,36,.40);--pk-inverse:#131a2a;--pk-inverse-fg:#f3f5fa;--pk-skeleton:#e4e8ef;--pk-shadow-1:0 1px 2px rgba(19,26,42,.05);--pk-shadow-2:0 6px 16px -4px rgba(19,26,42,.12),0 1px 3px rgba(19,26,42,.06);--pk-shadow-3:0 24px 48px -12px rgba(19,26,42,.30),0 2px 6px rgba(19,26,42,.08)}
+[data-pk-theme="dark"]{color-scheme:dark;--pk-side-bg:#0b0f1d;--pk-side-border:#1a2034;--pk-bg:#080b15;--pk-surface:#10152a;--pk-surface-2:#141a30;--pk-hover:#19203a;--pk-border:#222a43;--pk-border-strong:#343d5c;--pk-text:#e7eaf3;--pk-text-2:#aeb5c9;--pk-text-3:#8f98b0;--pk-primary:#5048e5;--pk-primary-hover:#6259f2;--pk-primary-fg:#a5b0fc;--pk-primary-soft:#1d2152;--pk-primary-soft-fg:#c6ccff;--pk-chart-2:#3a418f;--pk-amber:#f0a32a;--pk-amber-soft:#2c210c;--pk-amber-fg:#f8c46a;--pk-emerald:#2fc28a;--pk-emerald-soft:#0b2a1f;--pk-emerald-fg:#6fe2b2;--pk-rose:#f2557a;--pk-rose-soft:#331522;--pk-rose-fg:#fc9db3;--pk-focus:#8b93ff;--pk-overlay:rgba(2,4,10,.62);--pk-inverse:#e7eaf3;--pk-inverse-fg:#10152a;--pk-skeleton:#1c2339;--pk-shadow-1:0 1px 2px rgba(0,0,0,.4);--pk-shadow-2:0 8px 20px -6px rgba(0,0,0,.6),0 1px 3px rgba(0,0,0,.4);--pk-shadow-3:0 28px 56px -12px rgba(0,0,0,.75),0 2px 8px rgba(0,0,0,.5)}
+[data-pk-theme] *{box-sizing:border-box}
+[data-pk-theme] button,[data-pk-theme] input,[data-pk-theme] select{font:inherit;color:inherit}
+[data-pk-theme] :focus-visible{outline:2px solid var(--pk-focus);outline-offset:2px}
+[data-pk-theme] [aria-disabled="true"]{opacity:.45;cursor:not-allowed!important}
+[data-pk-theme] [class^="icon-"],[data-pk-theme] [class*=" icon-"]{line-height:1;display:inline-block}
+@keyframes pkPulse{0%,100%{opacity:1}50%{opacity:.45}}
+a{color:var(--pk-primary-fg)}a:hover{color:var(--pk-primary-hover)}
+</style>
+</helmet>
+<div data-pk-theme="light" style="min-height:100vh;background:var(--pk-bg);color:var(--pk-text);font-family:var(--pk-sans);font-size:13px;line-height:1.45;padding:40px 32px 64px">
+<div style="max-width:1480px;margin:0 auto;display:flex;flex-direction:column;gap:28px">
+  <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:14px">
+      <span style="width:40px;height:40px;border-radius:9px;background:#4338ca;color:#fff;display:grid;place-items:center;font-weight:700">PK</span>
+      <div>
+        <h1 style="margin:0;font-size:26px;line-height:32px;font-weight:600;letter-spacing:-.01em">PayrollKit design system</h1>
+        <p style="margin:2px 0 0;color:var(--pk-text-2)">Tokens and components for the admin app. IBM Plex Sans for UI, IBM Plex Mono for money and IDs. Icons from lucide.</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a href="PayrollKit.dc.html" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);color:var(--pk-text);font-weight:500;text-decoration:none;white-space:nowrap">Open prototype<i class="icon-arrow-up-right"></i></a>
+      <a href="PayrollKit Screens.dc.html" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);color:var(--pk-text);font-weight:500;text-decoration:none;white-space:nowrap">All screens<i class="icon-arrow-up-right"></i></a>
+    </div>
+  </header>
+
+  <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(520px,1fr));gap:16px;align-items:start">
+    <div style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:12px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--pk-border)"><i class="icon-braces" style="color:var(--pk-text-3)"></i><h2 style="margin:0;font-size:14px;font-weight:600">tokens.css</h2><span style="font-size:12px;color:var(--pk-text-3)">paste into app/globals.css</span><button onClick="{{ copyCss }}" style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);cursor:pointer;font-weight:500;white-space:nowrap"><i class="{{ copyIcon }}"></i>{{ copyLabel }}</button></div>
+      <pre ref="{{ cssRef }}" style="margin:0;padding:14px 16px;max-height:560px;overflow:auto;font-family:var(--pk-mono);font-size:11.5px;line-height:1.65;color:var(--pk-text-2);background:var(--pk-surface-2)">/* PayrollKit tokens. Set data-pk-theme="light" | "dark" on &lt;html&gt;. */
+:root, [data-pk-theme] {
+  --pk-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --pk-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* type scale (size / line-height) */
+  --pk-text-xs: 11.5px;  --pk-lh-xs: 16px;   /* table headers, captions */
+  --pk-text-sm: 12.5px;  --pk-lh-sm: 18px;   /* meta, helper text */
+  --pk-text-md: 13px;    --pk-lh-md: 19px;   /* base UI, table cells */
+  --pk-text-lg: 14px;    --pk-lh-lg: 20px;   /* card titles */
+  --pk-text-xl: 16px;    --pk-lh-xl: 22px;   /* dialog titles */
+  --pk-text-2xl: 22px;   --pk-lh-2xl: 28px;  /* page titles */
+  --pk-text-3xl: 24px;   --pk-lh-3xl: 30px;  /* stat values (mono) */
+
+  /* spacing, 4px base */
+  --pk-space-1: 4px;  --pk-space-2: 8px;  --pk-space-3: 12px; --pk-space-4: 16px;
+  --pk-space-5: 20px; --pk-space-6: 24px; --pk-space-8: 32px; --pk-space-10: 40px;
+  --pk-row-h: 40px;   --pk-row-h-compact: 36px; --pk-control-h: 32px; --pk-touch: 44px;
+
+  /* radius */
+  --pk-radius-sm: 4px; --pk-radius-md: 6px; --pk-radius-lg: 10px;
+  --pk-radius-xl: 12px; --pk-radius-pill: 999px;
+
+  /* sidebar: deep ink in both themes */
+  --pk-side-bg: #0f1424;  --pk-side-hover: #182038; --pk-side-active: #252e52;
+  --pk-side-text: #c3c9dc; --pk-side-muted: #8a93ad; --pk-side-border: #1e2539;
+  --pk-side-accent: #a5b0fc;
+}
+
+[data-pk-theme="light"] {
+  --pk-bg: #eef1f6;        --pk-surface: #ffffff;    --pk-surface-2: #f6f7fa;
+  --pk-hover: #f1f3f8;     --pk-border: #e1e5ed;     --pk-border-strong: #c8cfdc;
+  --pk-text: #131a2a;      --pk-text-2: #475167;     --pk-text-3: #5f6980;
+  --pk-primary: #4338ca;   --pk-primary-hover: #3730a3; --pk-primary-fg: #4338ca;
+  --pk-primary-soft: #eceefe; --pk-primary-soft-fg: #3730a3; --pk-chart-2: #b4bbf6;
+  --pk-amber: #d97706;     --pk-amber-soft: #fdf3dc;   --pk-amber-fg: #8a4a03;
+  --pk-emerald: #059669;   --pk-emerald-soft: #e3f5ec; --pk-emerald-fg: #05603f;
+  --pk-rose: #e11d48;      --pk-rose-soft: #fdeaee;    --pk-rose-fg: #a8183a;
+  --pk-focus: #4f46e5;     --pk-overlay: rgba(15,20,36,.40);
+  --pk-inverse: #131a2a;   --pk-inverse-fg: #f3f5fa;   --pk-skeleton: #e4e8ef;
+  --pk-shadow-1: 0 1px 2px rgba(19,26,42,.05);
+  --pk-shadow-2: 0 6px 16px -4px rgba(19,26,42,.12), 0 1px 3px rgba(19,26,42,.06);
+  --pk-shadow-3: 0 24px 48px -12px rgba(19,26,42,.30), 0 2px 6px rgba(19,26,42,.08);
+}
+
+[data-pk-theme="dark"] {
+  --pk-side-bg: #0b0f1d;   --pk-side-border: #1a2034;
+  --pk-bg: #080b15;        --pk-surface: #10152a;    --pk-surface-2: #141a30;
+  --pk-hover: #19203a;     --pk-border: #222a43;     --pk-border-strong: #343d5c;
+  --pk-text: #e7eaf3;      --pk-text-2: #aeb5c9;     --pk-text-3: #8f98b0;
+  --pk-primary: #5048e5;   --pk-primary-hover: #6259f2; --pk-primary-fg: #a5b0fc;
+  --pk-primary-soft: #1d2152; --pk-primary-soft-fg: #c6ccff; --pk-chart-2: #3a418f;
+  --pk-amber: #f0a32a;     --pk-amber-soft: #2c210c;   --pk-amber-fg: #f8c46a;
+  --pk-emerald: #2fc28a;   --pk-emerald-soft: #0b2a1f; --pk-emerald-fg: #6fe2b2;
+  --pk-rose: #f2557a;      --pk-rose-soft: #331522;    --pk-rose-fg: #fc9db3;
+  --pk-focus: #8b93ff;     --pk-overlay: rgba(2,4,10,.62);
+  --pk-inverse: #e7eaf3;   --pk-inverse-fg: #10152a;   --pk-skeleton: #1c2339;
+  --pk-shadow-1: 0 1px 2px rgba(0,0,0,.4);
+  --pk-shadow-2: 0 8px 20px -6px rgba(0,0,0,.6), 0 1px 3px rgba(0,0,0,.4);
+  --pk-shadow-3: 0 28px 56px -12px rgba(0,0,0,.75), 0 2px 8px rgba(0,0,0,.5);
+}
+
+:focus-visible { outline: 2px solid var(--pk-focus); outline-offset: 2px; }
+[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
+.pk-money { font-family: var(--pk-mono); font-variant-numeric: tabular-nums; text-align: right; }</pre>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:12px;overflow:hidden">
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--pk-border)"><i class="icon-wind" style="color:var(--pk-text-3)"></i><h2 style="margin:0;font-size:14px;font-weight:600">tailwind.config.js</h2><span style="font-size:12px;color:var(--pk-text-3)">Tailwind 3.4, maps to the variables</span></div>
+        <pre style="margin:0;padding:14px 16px;overflow:auto;font-family:var(--pk-mono);font-size:11.5px;line-height:1.65;color:var(--pk-text-2);background:var(--pk-surface-2)">const v = (n) =&gt; `var(--pk-${n})`;
+module.exports = {
+  darkMode: ['selector', '[data-pk-theme="dark"]'],
+  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
+  theme: { extend: {
+    colors: {
+      bg: v('bg'), hover: v('hover'),
+      surface: { DEFAULT: v('surface'), 2: v('surface-2') },
+      line: { DEFAULT: v('border'), strong: v('border-strong') },
+      ink: { DEFAULT: v('text'), 2: v('text-2'), 3: v('text-3') },
+      primary: { DEFAULT: v('primary'), hover: v('primary-hover'),
+                 fg: v('primary-fg'), soft: v('primary-soft'), 'soft-fg': v('primary-soft-fg') },
+      amber:   { DEFAULT: v('amber'),   soft: v('amber-soft'),   fg: v('amber-fg') },
+      emerald: { DEFAULT: v('emerald'), soft: v('emerald-soft'), fg: v('emerald-fg') },
+      rose:    { DEFAULT: v('rose'),    soft: v('rose-soft'),    fg: v('rose-fg') },
+      side: { bg: v('side-bg'), hover: v('side-hover'), active: v('side-active'),
+              text: v('side-text'), muted: v('side-muted'), line: v('side-border') },
+    },
+    fontFamily: { sans: ['IBM Plex Sans', 'system-ui'], mono: ['IBM Plex Mono', 'ui-monospace'] },
+    fontSize: { xs: ['11.5px', '16px'], sm: ['12.5px', '18px'], base: ['13px', '19px'],
+                lg: ['14px', '20px'], xl: ['16px', '22px'], '2xl': ['22px', '28px'] },
+    borderRadius: { sm: '4px', DEFAULT: '6px', lg: '10px', xl: '12px' },
+    boxShadow: { 1: v('shadow-1'), 2: v('shadow-2'), 3: v('shadow-3') },
+    height: { row: '40px', control: '32px', touch: '44px' },
+  } },
+};
+// money cell: className="font-mono tabular-nums text-right"</pre>
+      </div>
+      <div style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+        <h2 style="margin:0;font-size:14px;font-weight:600">Rules that matter</h2>
+        <ul style="margin:0;padding-left:18px;color:var(--pk-text-2);display:flex;flex-direction:column;gap:5px;text-wrap:pretty">
+          <li>Money is rendered exactly as the API string. Never parse to float. Two decimals, thousands separators, <span style="font-family:var(--pk-mono)">$</span> only in column headers and totals.</li>
+          <li>Every money and ID cell is <span style="font-family:var(--pk-mono)">font-mono tabular-nums text-right</span>.</li>
+          <li>Status = dot + word (+ lock for Paid). Colour is never the only signal.</li>
+          <li>Emerald is reserved for Paid / success. Amber = Draft / warning. Indigo = Approved / primary. Rose = errors.</li>
+          <li>Disabled actions use <span style="font-family:var(--pk-mono)">aria-disabled</span> so they stay focusable and can show a tooltip ("Admin only").</li>
+          <li>Irreversible actions (Approve, Mark paid) open a confirm dialog that states the consequence.</li>
+          <li>Rows 40px (36px compact), hairline dividers, no zebra, sticky header, pinned totals row.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(640px,1fr));gap:16px">
+    <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+    <div data-pk-theme="{{ t.key }}" style="background:var(--pk-bg);color:var(--pk-text);border:1px solid var(--pk-border);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:22px">
+      <div style="display:flex;align-items:center;gap:8px"><i class="{{ t.icon }}" style="font-size:16px;color:var(--pk-text-2)"></i><h2 style="margin:0;font-size:16px;font-weight:600">{{ t.label }}</h2></div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-family:var(--pk-mono);font-size:11px;color:var(--pk-text-3);letter-spacing:.04em">COLOR</span>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px">
+          <sc-for list="{{ swatches }}" as="s">
+          <div style="border-radius:8px;overflow:hidden;border:1px solid var(--pk-border);background:var(--pk-surface)">
+            <div style="height:40px;background:var({{ s.v }})"></div>
+            <div style="padding:6px 8px"><div style="font-size:12px;font-weight:500">{{ s.name }}</div><div style="font-family:var(--pk-mono);font-size:10.5px;color:var(--pk-text-3)">--pk-{{ s.n }}</div></div>
+          </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-family:var(--pk-mono);font-size:11px;color:var(--pk-text-3);letter-spacing:.04em">TYPE</span>
+          <div style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;padding:4px 14px">
+            <div style="display:flex;align-items:baseline;gap:12px;padding:8px 0;border-bottom:1px solid var(--pk-border)"><span style="font-family:var(--pk-mono);font-size:10.5px;color:var(--pk-text-3);width:60px">2xl/600</span><span style="font-size:22px;line-height:28px;font-weight:600">Sep 2026 payroll</span></div>
+            <div style="display:flex;align-items:baseline;gap:12px;padding:8px 0;border-bottom:1px solid var(--pk-border)"><span style="font-family:var(--pk-mono);font-size:10.5px;color:var(--pk-text-3);width:60px">lg/600</span><span style="font-size:14px;font-weight:600">Latest run totals</span></div>
+            <div style="display:flex;align-items:baseline;gap:12px;padding:8px 0;border-bottom:1px solid var(--pk-border)"><span style="font-family:var(--pk-mono);font-size:10.5px;color:var(--pk-text-3);width:60px">base/400</span><span>Inputs changed since the last calculation.</span></div>
+            <div style="display:flex;align-items:baseline;gap:12px;padding:8px 0;border-bottom:1px solid var(--pk-border)"><span style="font-family:var(--pk-mono);font-size:10.5px;color:var(--pk-text-3);width:60px">xs/600</span><span style="font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3)">Taxable ($)</span></div>
+            <div style="display:flex;align-items:baseline;gap:12px;padding:8px 0;border-bottom:1px solid var(--pk-border)"><span style="font-family:var(--pk-mono);font-size:10.5px;color:var(--pk-text-3);width:60px">mono 24</span><span style="font-family:var(--pk-mono);font-size:24px;font-weight:500;letter-spacing:-.02em">24,770.68</span></div>
+            <div style="display:flex;align-items:baseline;gap:12px;padding:8px 0"><span style="font-family:var(--pk-mono);font-size:10.5px;color:var(--pk-text-3);width:60px">mono 13</span><span style="font-family:var(--pk-mono)">E001 · 6,000.00 · 2026-10-01</span></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-family:var(--pk-mono);font-size:11px;color:var(--pk-text-3);letter-spacing:.04em">RADIUS · SHADOW · SPACE</span>
+          <div style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;gap:10px;align-items:flex-end">
+              <sc-for list="{{ radii }}" as="r"><div style="display:flex;flex-direction:column;align-items:center;gap:4px"><span style="width:40px;height:40px;background:var(--pk-primary-soft);border:1px solid var(--pk-primary-fg);border-radius:{{ r.v }}"></span><span style="font-family:var(--pk-mono);font-size:10.5px;color:var(--pk-text-3)">{{ r.l }}</span></div></sc-for>
+            </div>
+            <div style="display:flex;gap:12px">
+              <sc-for list="{{ shadows }}" as="s"><div style="flex:1;height:48px;border-radius:8px;background:var(--pk-surface);border:1px solid var(--pk-border);box-shadow:var({{ s }});display:grid;place-items:center;font-family:var(--pk-mono);font-size:10.5px;color:var(--pk-text-3)">{{ s }}</div></sc-for>
+            </div>
+            <div style="display:flex;gap:6px;align-items:flex-end">
+              <sc-for list="{{ spaces }}" as="s"><div style="display:flex;flex-direction:column;align-items:center;gap:4px"><span style="width:{{ s }};height:{{ s }};background:var(--pk-chart-2)"></span><span style="font-family:var(--pk-mono);font-size:10px;color:var(--pk-text-3)">{{ s }}</span></div></sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-family:var(--pk-mono);font-size:11px;color:var(--pk-text-3);letter-spacing:.04em">BUTTONS</span>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;padding:14px">
+          <button style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-primary-hover)"><i class="icon-check"></i>Approve</button>
+          <button style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-hover)"><i class="icon-calculator"></i>Calculate</button>
+          <button style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--pk-text-2);font-weight:500;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-hover)"><i class="icon-file-spreadsheet"></i>Export CSV</button>
+          <button style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--pk-rose-fg);font-weight:500;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-rose-soft)"><i class="icon-trash-2"></i>Delete</button>
+          <span style="position:relative;display:inline-flex;flex-direction:column;align-items:center">
+            <span role="tooltip" style="position:absolute;bottom:calc(100% + 6px);background:var(--pk-inverse);color:var(--pk-inverse-fg);font-size:12px;padding:4px 8px;border-radius:5px;white-space:nowrap">Admin only</span>
+            <button aria-disabled="true" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;white-space:nowrap"><i class="icon-banknote"></i>Mark paid<i class="icon-lock" style="font-size:11px"></i></button>
+          </span>
+          <button style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;outline:2px solid var(--pk-focus);outline-offset:2px;white-space:nowrap">Focus ring</button>
+          <button aria-label="More" style="width:32px;height:32px;border-radius:6px;border:1px solid var(--pk-border);background:var(--pk-surface);cursor:pointer;display:grid;place-items:center;color:var(--pk-text-2)"><i class="icon-ellipsis" style="font-size:15px"></i></button>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-family:var(--pk-mono);font-size:11px;color:var(--pk-text-3);letter-spacing:.04em">STATUS PILLS</span>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;padding:14px">
+            <span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 8px 0 7px;border-radius:999px;font-size:12px;font-weight:500;background:var(--pk-amber-soft);color:var(--pk-amber-fg)"><span style="width:6px;height:6px;border-radius:50%;background:var(--pk-amber)"></span>Draft</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 8px 0 7px;border-radius:999px;font-size:12px;font-weight:500;background:var(--pk-primary-soft);color:var(--pk-primary-soft-fg)"><span style="width:6px;height:6px;border-radius:50%;background:var(--pk-primary-fg)"></span>Approved</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 8px 0 7px;border-radius:999px;font-size:12px;font-weight:500;background:var(--pk-emerald-soft);color:var(--pk-emerald-fg)"><span style="width:6px;height:6px;border-radius:50%;background:var(--pk-emerald)"></span>Paid<i class="icon-lock" style="font-size:11px"></i></span>
+            <span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 8px 0 7px;border-radius:999px;font-size:12px;font-weight:500;background:var(--pk-surface-2);border:1px solid var(--pk-border);color:var(--pk-text-2)"><span style="width:6px;height:6px;border-radius:50%;background:var(--pk-text-2)"></span>Active</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border-radius:999px;background:var(--pk-amber-soft);color:var(--pk-amber-fg);font-size:12px;font-weight:600"><i class="icon-flask-conical"></i>Illustrative only</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-family:var(--pk-mono);font-size:11px;color:var(--pk-text-3);letter-spacing:.04em">STAT CARD</span>
+          <div style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;padding:14px 16px;box-shadow:var(--pk-shadow-1)">
+            <div style="display:flex;align-items:center;gap:6px;color:var(--pk-text-2);font-size:12px"><i class="icon-wallet"></i>Total net ($)</div>
+            <div style="margin-top:6px;font-family:var(--pk-mono);font-size:24px;font-weight:500;letter-spacing:-.02em;color:var(--pk-primary-fg)">24,770.68</div>
+            <div style="margin-top:2px;font-size:12px;color:var(--pk-text-3)">Sep 2026 · 6 payslips</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-family:var(--pk-mono);font-size:11px;color:var(--pk-text-3);letter-spacing:.04em">STEPPER</span>
+        <ol style="margin:0;padding:14px 16px;list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px">
+          <li style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:50%;background:var(--pk-primary);color:#fff;display:grid;place-items:center"><i class="icon-check" style="font-size:13px"></i></span><span style="display:flex;flex-direction:column"><span style="font-weight:600">Draft <span style="font-size:10.5px;letter-spacing:.06em;color:var(--pk-primary-fg)">DONE</span></span><span style="font-size:12px;color:var(--pk-text-3)">Calculated 12 Oct</span></span></li>
+          <li style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:50%;background:var(--pk-primary-soft);border:1.5px solid var(--pk-primary-fg);color:var(--pk-primary-soft-fg);display:grid;place-items:center;font-family:var(--pk-mono);font-size:12px;font-weight:600">2</span><span style="display:flex;flex-direction:column"><span style="font-weight:600">Approved <span style="font-size:10.5px;letter-spacing:.06em;color:var(--pk-amber-fg)">CURRENT</span></span><span style="font-size:12px;color:var(--pk-text-3)">Approved by demo_admin, 12 Oct 10:42</span></span></li>
+          <li style="display:flex;align-items:center;gap:10px"><span style="width:26px;height:26px;border-radius:50%;border:1.5px solid var(--pk-border-strong);color:var(--pk-text-3);display:grid;place-items:center;font-family:var(--pk-mono);font-size:12px;font-weight:600">3</span><span style="display:flex;flex-direction:column"><span style="font-weight:600">Paid <span style="font-size:10.5px;letter-spacing:.06em;color:var(--pk-text-3)">NEXT</span></span><span style="font-size:12px;color:var(--pk-text-3)">Pay date 2026-10-01</span></span></li>
+        </ol>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-family:var(--pk-mono);font-size:11px;color:var(--pk-text-3);letter-spacing:.04em">DATA TABLE · 40px rows · sticky header · pinned totals</span>
+        <div style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;overflow:hidden">
+          <table style="width:100%;border-collapse:separate;border-spacing:0">
+            <thead><tr>
+              <th style="background:var(--pk-surface-2);height:34px;padding:0 12px 0 16px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border)">Employee</th>
+              <th style="background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:right;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border)">Gross ($)</th>
+              <th style="background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:right;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border)">Net ($)</th>
+              <th style="background:var(--pk-surface-2);height:34px;padding:0 16px 0 12px;text-align:right;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);border-left:1px dashed var(--pk-border)">Benefits ($)</th>
+            </tr></thead>
+            <tbody>
+              <tr><td style="height:40px;padding:0 12px 0 16px;border-bottom:1px solid var(--pk-border)"><span style="font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-3);margin-right:8px">E001</span><span style="font-weight:500">Ava Stone</span></td><td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);text-align:right">6,000.00</td><td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);text-align:right;font-weight:600">4,889.07</td><td style="height:40px;padding:0 16px 0 12px;border-bottom:1px solid var(--pk-border);border-left:1px dashed var(--pk-border);font-family:var(--pk-mono);text-align:right;color:var(--pk-text-3)">180.00</td></tr>
+              <tr style="background:var(--pk-primary-soft)"><td style="height:40px;padding:0 12px 0 16px;border-bottom:1px solid var(--pk-border)"><span style="font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-3);margin-right:8px">E002</span><span style="font-weight:500">Ben Carter</span> <span style="font-size:11px;color:var(--pk-text-3)">selected</span></td><td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);text-align:right">4,500.00</td><td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);text-align:right;font-weight:600">3,726.40</td><td style="height:40px;padding:0 16px 0 12px;border-bottom:1px solid var(--pk-border);border-left:1px dashed var(--pk-border);font-family:var(--pk-mono);text-align:right;color:var(--pk-text-3)">135.00</td></tr>
+            </tbody>
+            <tfoot><tr><td style="background:var(--pk-surface-2);height:40px;padding:0 12px 0 16px;border-top:1px solid var(--pk-border-strong);font-weight:600">Totals ($)</td><td style="background:var(--pk-surface-2);height:40px;padding:0 12px;border-top:1px solid var(--pk-border-strong);font-family:var(--pk-mono);text-align:right;font-weight:600">30,265.25</td><td style="background:var(--pk-surface-2);height:40px;padding:0 12px;border-top:1px solid var(--pk-border-strong);font-family:var(--pk-mono);text-align:right;font-weight:700;color:var(--pk-primary-fg)">24,770.68</td><td style="background:var(--pk-surface-2);height:40px;padding:0 16px 0 12px;border-top:1px solid var(--pk-border-strong);border-left:1px dashed var(--pk-border);font-family:var(--pk-mono);text-align:right;color:var(--pk-text-3)">907.96</td></tr></tfoot>
+          </table>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-family:var(--pk-mono);font-size:11px;color:var(--pk-text-3);letter-spacing:.04em">FORM FIELDS</span>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;padding:14px">
+          <label style="display:flex;flex-direction:column;gap:5px;font-weight:500">Email<input value="ava@example.com" style="height:32px;padding:0 10px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:400"></label>
+          <label style="display:flex;flex-direction:column;gap:5px;font-weight:500">Annual salary<span style="position:relative;display:flex;align-items:center"><span style="position:absolute;left:10px;color:var(--pk-text-3);font-family:var(--pk-mono)">$</span><input value="72000.00" style="height:32px;width:100%;padding:0 10px 0 22px;border-radius:6px;border:1px solid var(--pk-focus);outline:2px solid color-mix(in oklab,var(--pk-focus) 30%,transparent);background:var(--pk-surface);font-family:var(--pk-mono);text-align:right;font-weight:400"></span></label>
+          <label style="display:flex;flex-direction:column;gap:5px;font-weight:500">Employee number<input value="E002" aria-invalid="true" style="height:32px;padding:0 10px;border-radius:6px;border:1px solid var(--pk-rose);background:var(--pk-surface);font-family:var(--pk-mono);font-weight:400"><span style="display:flex;gap:5px;align-items:center;font-size:12px;font-weight:400;color:var(--pk-rose-fg)"><i class="icon-circle-alert"></i>E002 is already used by Ben Carter</span></label>
+          <label style="display:flex;flex-direction:column;gap:5px;font-weight:500">Frequency<select style="height:32px;padding:0 8px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:400"><option>Monthly (12)</option></select></label>
+          <div style="display:flex;flex-direction:column;gap:8px;justify-content:flex-end">
+            <span style="display:flex;align-items:center;gap:8px"><span role="switch" aria-checked="true" style="width:34px;height:20px;border-radius:999px;padding:2px;background:var(--pk-primary);display:flex;justify-content:flex-end"><span style="width:16px;height:16px;border-radius:50%;background:#fff"></span></span>Pre-tax</span>
+            <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" checked style="width:15px;height:15px;accent-color:var(--pk-primary)">No cap</label>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:5px;font-weight:500">Rate<span style="position:relative;display:flex;align-items:center"><input value="130" style="width:100%;height:32px;padding:0 24px 0 8px;border-radius:5px;border:1px solid var(--pk-rose);background:var(--pk-surface);font-family:var(--pk-mono);text-align:right;font-weight:400"><span style="position:absolute;right:8px;color:var(--pk-text-3);font-family:var(--pk-mono)">%</span></span><span style="display:flex;gap:5px;align-items:center;font-size:12px;font-weight:400;color:var(--pk-rose-fg)"><i class="icon-circle-alert"></i>Between 0 and 100</span></label>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-family:var(--pk-mono);font-size:11px;color:var(--pk-text-3);letter-spacing:.04em">BANNERS</span>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--pk-amber-soft);color:var(--pk-amber-fg);border:1px solid color-mix(in oklab,var(--pk-amber) 35%,transparent)"><i class="icon-triangle-alert" style="font-size:16px"></i><span><strong style="font-weight:600">Inputs changed since the last calculation.</strong> Recalculate before approving.</span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--pk-rose-soft);color:var(--pk-rose-fg);border:1px solid color-mix(in oklab,var(--pk-rose) 30%,transparent)"><i class="icon-octagon-x" style="font-size:16px"></i><span><strong style="font-weight:600">Cannot delete, it is still in use.</strong> HEALTH is assigned to 6 employees. <span style="font-family:var(--pk-mono);font-size:11.5px">409</span></span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--pk-surface);border:1px solid var(--pk-border)"><span style="width:28px;height:28px;border-radius:7px;background:var(--pk-emerald-soft);color:var(--pk-emerald-fg);display:grid;place-items:center"><i class="icon-lock"></i></span><span><strong style="font-weight:600">This run is paid and locked.</strong> <span style="color:var(--pk-text-2)">Paid by demo_admin, 12 Oct 11:05.</span></span></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-family:var(--pk-mono);font-size:11px;color:var(--pk-text-3);letter-spacing:.04em">TOAST</span>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;background:var(--pk-inverse);color:var(--pk-inverse-fg);box-shadow:var(--pk-shadow-3)"><i class="icon-circle-check" style="font-size:16px;color:var(--pk-emerald)"></i><span style="display:flex;flex-direction:column"><span style="font-weight:500">Recalculated 6 payslips</span><span style="font-family:var(--pk-mono);font-size:11.5px;opacity:.72">X-Recalculated: true</span></span></div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;background:var(--pk-inverse);color:var(--pk-inverse-fg);box-shadow:var(--pk-shadow-3)"><i class="icon-info" style="font-size:16px;color:var(--pk-primary-fg)"></i><span style="display:flex;flex-direction:column"><span style="font-weight:500">Nothing changed, no recalculation needed</span><span style="font-family:var(--pk-mono);font-size:11.5px;opacity:.72">X-Recalculated: false</span></span></div>
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;background:var(--pk-inverse);color:var(--pk-inverse-fg);box-shadow:var(--pk-shadow-3)"><i class="icon-circle-alert" style="font-size:16px;color:var(--pk-rose)"></i><span style="font-weight:500">Cannot delete, it is still in use</span></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-family:var(--pk-mono);font-size:11px;color:var(--pk-text-3);letter-spacing:.04em">CONFIRM DIALOG</span>
+          <div role="alertdialog" style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:12px;box-shadow:var(--pk-shadow-3)">
+            <div style="padding:16px;display:flex;gap:12px">
+              <span style="width:34px;height:34px;flex:none;border-radius:9px;display:grid;place-items:center;background:var(--pk-emerald-soft);color:var(--pk-emerald-fg)"><i class="icon-lock" style="font-size:16px"></i></span>
+              <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:600">Mark Sep 2026 as paid?</span><span style="color:var(--pk-text-2)">Records $24,770.68 paid to 6 employees.</span><span style="padding:6px 8px;border-radius:6px;background:var(--pk-surface-2);border:1px solid var(--pk-border);font-weight:500">Paid runs cannot be changed.</span></div>
+            </div>
+            <div style="padding:10px 16px;border-top:1px solid var(--pk-border);display:flex;justify-content:flex-end;gap:8px;background:var(--pk-surface-2);border-radius:0 0 12px 12px"><button style="height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500">Cancel</button><button style="height:32px;padding:0 12px;border-radius:6px;border:0;background:var(--pk-primary);color:#fff;font-weight:500">Mark paid</button></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-family:var(--pk-mono);font-size:11px;color:var(--pk-text-3);letter-spacing:.04em">FILE DROPZONE · idle / drag-over</span>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div style="min-height:120px;border-radius:10px;border:2px dashed var(--pk-border-strong);background:var(--pk-surface);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;padding:12px"><i class="icon-file-up" style="font-size:20px;color:var(--pk-primary-fg)"></i><span style="font-weight:600">Drag a CSV here</span><span style="font-size:12px;color:var(--pk-text-2)">or browse</span></div>
+            <div style="min-height:120px;border-radius:10px;border:2px dashed var(--pk-primary-fg);background:var(--pk-primary-soft);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;padding:12px"><i class="icon-file-up" style="font-size:20px;color:var(--pk-primary-fg)"></i><span style="font-weight:600">Drop to validate</span><span style="font-size:12px;color:var(--pk-text-2)">new-hires.csv</span></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-family:var(--pk-mono);font-size:11px;color:var(--pk-text-3);letter-spacing:.04em">EMPTY STATE · SKELETON</span>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div style="min-height:120px;border-radius:10px;border:1px solid var(--pk-border);background:var(--pk-surface);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;padding:12px"><span style="width:32px;height:32px;border-radius:8px;background:var(--pk-primary-soft);color:var(--pk-primary-soft-fg);display:grid;place-items:center"><i class="icon-wallet"></i></span><span style="font-weight:600">No payroll runs yet</span><button style="margin-top:4px;height:28px;padding:0 10px;border-radius:6px;border:0;background:var(--pk-primary);color:#fff;font-weight:500;font-size:12px;white-space:nowrap">New run</button></div>
+            <div aria-busy="true" style="border-radius:10px;border:1px solid var(--pk-border);background:var(--pk-surface);overflow:hidden">
+              <sc-for list="{{ skel }}" as="k"><div style="height:40px;display:flex;gap:10px;align-items:center;padding:0 12px;border-bottom:1px solid var(--pk-border)"><span style="height:9px;width:{{ k }};border-radius:4px;background:var(--pk-skeleton);animation:pkPulse 1.4s ease-in-out infinite"></span><span style="margin-left:auto;height:9px;width:40px;border-radius:4px;background:var(--pk-skeleton);animation:pkPulse 1.4s ease-in-out infinite"></span></div></sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-family:var(--pk-mono);font-size:11px;color:var(--pk-text-3);letter-spacing:.04em">DRAWER · right, 560px (full width under 760px)</span>
+        <div style="position:relative;height:230px;border-radius:10px;overflow:hidden;border:1px solid var(--pk-border);background:var(--pk-bg)">
+          <div style="position:absolute;inset:0;background:var(--pk-overlay)"></div>
+          <div style="position:absolute;top:0;right:0;bottom:0;width:62%;background:var(--pk-surface);border-left:1px solid var(--pk-border);box-shadow:var(--pk-shadow-3);display:flex;flex-direction:column">
+            <div style="padding:12px 14px;border-bottom:1px solid var(--pk-border);display:flex;align-items:center;gap:10px"><span style="width:30px;height:30px;border-radius:50%;background:var(--pk-primary-soft);color:var(--pk-primary-soft-fg);display:grid;place-items:center;font-weight:600;font-size:12px">AS</span><span style="font-weight:600">Ava Stone</span><span style="font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-3)">E001</span><i class="icon-x" style="margin-left:auto;color:var(--pk-text-2)"></i></div>
+            <div style="flex:1;padding:12px 14px;display:flex;flex-direction:column;gap:6px">
+              <div style="display:grid;grid-template-columns:20px 1fr auto"><span style="font-family:var(--pk-mono);color:var(--pk-text-3)"></span><span style="color:var(--pk-text-2)">Gross pay</span><span style="font-family:var(--pk-mono)">6,000.00</span></div>
+              <div style="display:grid;grid-template-columns:20px 1fr auto"><span style="font-family:var(--pk-mono);color:var(--pk-text-3)">−</span><span style="color:var(--pk-text-2)">Pre-tax</span><span style="font-family:var(--pk-mono)">420.00</span></div>
+              <div style="display:grid;grid-template-columns:20px 1fr auto"><span style="font-family:var(--pk-mono);color:var(--pk-text-3)">−</span><span style="color:var(--pk-text-2)">Tax</span><span style="font-family:var(--pk-mono)">690.93</span></div>
+              <div style="display:grid;grid-template-columns:20px 1fr auto;border-top:1px solid var(--pk-border-strong);padding-top:6px"><span style="font-family:var(--pk-mono);color:var(--pk-text-3)">=</span><span style="font-weight:600">Net pay ($)</span><span style="font-family:var(--pk-mono);font-weight:600;color:var(--pk-primary-fg)">4,889.07</span></div>
+            </div>
+            <div style="padding:10px 14px;border-top:1px solid var(--pk-border);display:flex;justify-content:flex-end"><button style="display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border-radius:6px;border:0;background:var(--pk-primary);color:#fff;font-weight:500;white-space:nowrap"><i class="icon-download"></i>Download PDF</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </sc-for>
+  </section>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  cssRef = React.createRef();
+  state = { copied: false };
+  renderVals() {
+    return {
+      cssRef: this.cssRef,
+      copyCss: () => { const t = this.cssRef.current?.textContent || ''; navigator.clipboard?.writeText(t).then(() => { this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1600); }); },
+      copyLabel: this.state.copied ? 'Copied' : 'Copy', copyIcon: this.state.copied ? 'icon-check' : 'icon-copy',
+      themes: [{ key: 'light', label: 'Light', icon: 'icon-sun' }, { key: 'dark', label: 'Dark', icon: 'icon-moon' }],
+      swatches: [['Background', 'bg'], ['Surface', 'surface'], ['Surface 2', 'surface-2'], ['Border', 'border-strong'], ['Text', 'text'], ['Text 2', 'text-2'], ['Text 3', 'text-3'], ['Sidebar', 'side-bg'], ['Primary', 'primary'], ['Primary soft', 'primary-soft'], ['Amber · draft', 'amber'], ['Amber soft', 'amber-soft'], ['Emerald · paid', 'emerald'], ['Emerald soft', 'emerald-soft'], ['Rose · error', 'rose'], ['Rose soft', 'rose-soft']].map(([name, n]) => ({ name, n, v: `--pk-${n}` })),
+      radii: [['4px', 'sm'], ['6px', 'md'], ['10px', 'lg'], ['12px', 'xl'], ['999px', 'pill']].map(([v, l]) => ({ v, l: `${l} ${v === '999px' ? '' : v}` })),
+      shadows: ['--pk-shadow-1', '--pk-shadow-2', '--pk-shadow-3'],
+      spaces: ['4px', '8px', '12px', '16px', '20px', '24px', '32px', '40px'],
+      skel: ['60%', '45%', '70%'],
+    };
+  }
+}
+</script>
+</body>
+</html>

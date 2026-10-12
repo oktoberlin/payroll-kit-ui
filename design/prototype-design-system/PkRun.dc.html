@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="display:flex;flex-direction:column;gap:16px">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+    <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <h1 style="margin:0;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.01em">Sep 2026 payroll</h1>
+        <span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 8px 0 7px;border-radius:999px;font-size:12px;font-weight:500;white-space:nowrap;background:{{ pill.bg }};color:{{ pill.fg }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ pill.dot }}"></span>{{ pill.label }}<sc-if value="{{ pill.lock }}"><i class="icon-lock" style="font-size:11px"></i></sc-if></span>
+        <sc-if value="{{ paid }}"><span style="display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;border:1px solid var(--pk-border-strong);font-size:12px;color:var(--pk-text-2);white-space:nowrap"><i class="icon-eye" style="font-size:12px"></i>Read-only</span></sc-if>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px 14px;color:var(--pk-text-2);font-size:12.5px">
+        <span>Period <span style="font-family:var(--pk-mono);color:var(--pk-text)">2026-09-01 → 2026-09-30</span></span>
+        <span>Pay date <span style="font-family:var(--pk-mono);color:var(--pk-text)">2026-10-01</span></span>
+        <span>Monthly</span>
+        <span>Run <span style="font-family:var(--pk-mono)">#3</span></span>
+      </div>
+    </div>
+  </div>
+
+  <ol aria-label="Run status" style="margin:0;padding:14px 16px;list-style:none;display:grid;grid-template-columns:{{ stepCols }};gap:{{ stepGap }};background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;box-shadow:var(--pk-shadow-1)">
+    <sc-for list="{{ steps }}" as="p" hint-placeholder-count="3">
+    <li aria-current="{{ p.current }}" style="display:flex;align-items:flex-start;gap:10px;min-width:0">
+      <span style="width:26px;height:26px;flex:none;border-radius:50%;display:grid;place-items:center;font-family:var(--pk-mono);font-size:12px;font-weight:600;background:{{ p.bg }};color:{{ p.fg }};border:1.5px solid {{ p.border }}"><sc-if value="{{ p.done }}"><i class="{{ p.doneIcon }}" style="font-size:13px"></i></sc-if><sc-if value="{{ p.notDone }}">{{ p.n }}</sc-if></span>
+      <span style="display:flex;flex-direction:column;min-width:0;flex:1">
+        <span style="display:flex;align-items:center;gap:8px"><span style="font-weight:600">{{ p.label }}</span><span style="font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:{{ p.stateFg }}">{{ p.stateLabel }}</span></span>
+        <span style="font-size:12px;color:var(--pk-text-3);text-wrap:pretty">{{ p.sub }}</span>
+      </span>
+      <sc-if value="{{ p.line }}"><span aria-hidden="true" style="align-self:center;flex:0 1 56px;min-width:16px;height:2px;border-radius:2px;background:{{ p.lineBg }};margin-right:6px"></span></sc-if>
+    </li>
+    </sc-for>
+  </ol>
+
+  <sc-if value="{{ paid }}">
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;border-radius:10px;background:var(--pk-surface);border:1px solid var(--pk-border);box-shadow:var(--pk-shadow-1)">
+    <span style="width:32px;height:32px;flex:none;border-radius:8px;background:var(--pk-emerald-soft);color:var(--pk-emerald-fg);display:grid;place-items:center"><i class="icon-lock" style="font-size:15px"></i></span>
+    <div style="flex:1;min-width:220px">
+      <div style="font-weight:600">This run is paid and locked</div>
+      <div style="color:var(--pk-text-2);font-size:12.5px">{{ paidLine }}. Payslips are immutable; nothing on this page can be edited.</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button onClick="{{ onExport }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-hover)"><i class="icon-file-spreadsheet"></i>Export CSV register</button>
+      <button onClick="{{ onExport }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-hover)"><i class="icon-file-down"></i>All payslip PDFs</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ notPaid }}">
+  <div role="toolbar" aria-label="Run actions" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px;border-radius:10px;background:var(--pk-surface);border:1px solid var(--pk-border);box-shadow:var(--pk-shadow-1)">
+    <span onMouseEnter="{{ b.calc.enter }}" onMouseLeave="{{ tipOff }}" onFocus="{{ b.calc.enter }}" onBlur="{{ tipOff }}" style="position:relative;display:inline-flex">
+      <button aria-disabled="{{ b.calc.dis }}" onClick="{{ b.calc.click }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-hover)"><i class="icon-calculator"></i>Calculate<span style="font-family:var(--pk-mono);font-size:11px;color:var(--pk-text-3);border:1px solid var(--pk-border);border-radius:3px;padding:0 4px;margin-left:2px">C</span></button>
+      <sc-if value="{{ b.calc.showTip }}"><span role="tooltip" style="position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--pk-inverse);color:var(--pk-inverse-fg);font-size:12px;padding:5px 8px;border-radius:5px;white-space:nowrap;box-shadow:var(--pk-shadow-2);z-index:5">{{ b.calc.tip }}</span></sc-if>
+    </span>
+    <span onMouseEnter="{{ b.approve.enter }}" onMouseLeave="{{ tipOff }}" onFocus="{{ b.approve.enter }}" onBlur="{{ tipOff }}" style="position:relative;display:inline-flex">
+      <button aria-disabled="{{ b.approve.dis }}" onClick="{{ b.approve.click }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap"><i class="icon-check"></i>Approve<sc-if value="{{ b.approve.lock }}"><i class="icon-lock" style="font-size:11px;opacity:.85"></i></sc-if></button>
+      <sc-if value="{{ b.approve.showTip }}"><span role="tooltip" style="position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--pk-inverse);color:var(--pk-inverse-fg);font-size:12px;padding:5px 8px;border-radius:5px;white-space:nowrap;box-shadow:var(--pk-shadow-2);z-index:5">{{ b.approve.tip }}</span></sc-if>
+    </span>
+    <span onMouseEnter="{{ b.reopen.enter }}" onMouseLeave="{{ tipOff }}" onFocus="{{ b.reopen.enter }}" onBlur="{{ tipOff }}" style="position:relative;display:inline-flex">
+      <button aria-disabled="{{ b.reopen.dis }}" onClick="{{ b.reopen.click }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-hover)"><i class="icon-rotate-ccw"></i>Reopen<sc-if value="{{ b.reopen.lock }}"><i class="icon-lock" style="font-size:11px;color:var(--pk-text-3)"></i></sc-if></button>
+      <sc-if value="{{ b.reopen.showTip }}"><span role="tooltip" style="position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--pk-inverse);color:var(--pk-inverse-fg);font-size:12px;padding:5px 8px;border-radius:5px;white-space:nowrap;box-shadow:var(--pk-shadow-2);z-index:5">{{ b.reopen.tip }}</span></sc-if>
+    </span>
+    <span onMouseEnter="{{ b.paid.enter }}" onMouseLeave="{{ tipOff }}" onFocus="{{ b.paid.enter }}" onBlur="{{ tipOff }}" style="position:relative;display:inline-flex">
+      <button aria-disabled="{{ b.paid.dis }}" onClick="{{ b.paid.click }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap"><i class="icon-banknote"></i>Mark paid<sc-if value="{{ b.paid.lock }}"><i class="icon-lock" style="font-size:11px;opacity:.85"></i></sc-if></button>
+      <sc-if value="{{ b.paid.showTip }}"><span role="tooltip" style="position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--pk-inverse);color:var(--pk-inverse-fg);font-size:12px;padding:5px 8px;border-radius:5px;white-space:nowrap;box-shadow:var(--pk-shadow-2);z-index:5">{{ b.paid.tip }}</span></sc-if>
+    </span>
+    <sc-if value="{{ isManager }}"><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--pk-text-3)"><i class="icon-info"></i>Approve, Reopen and Mark paid are admin only</span></sc-if>
+    <span style="flex:1"></span>
+    <button onClick="{{ onExport }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--pk-text-2);font-weight:500;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-hover);color:var(--pk-text)"><i class="icon-file-spreadsheet"></i>Export CSV register</button>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ showStale }}">
+  <div role="alert" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 12px 10px 14px;border-radius:10px;background:var(--pk-amber-soft);color:var(--pk-amber-fg);border:1px solid color-mix(in oklab,var(--pk-amber) 35%,transparent)">
+    <i class="icon-triangle-alert" style="font-size:16px"></i>
+    <div style="flex:1;min-width:220px"><strong style="font-weight:600">Inputs changed since the last calculation.</strong> Recalculate before approving. <span style="opacity:.85">A timesheet was edited after {{ calcLine }}.</span></div>
+    <button onClick="{{ onCalculate }}" style="display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border-radius:6px;border:1px solid currentColor;background:transparent;color:inherit;font-weight:600;cursor:pointer;white-space:nowrap"><i class="icon-refresh-cw"></i>Recalculate</button>
+  </div>
+  </sc-if>
+
+  <section aria-label="Payslips" style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;box-shadow:var(--pk-shadow-1);overflow:hidden">
+    <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--pk-border)">
+      <h2 style="margin:0;font-size:14px;font-weight:600">Payslips</h2>
+      <span style="font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-3)">6</span>
+      <span style="margin-left:auto;font-size:12px;color:var(--pk-text-3)">{{ tableHint }}</span>
+    </div>
+    <sc-if value="{{ wide }}">
+    <div style="max-height:520px;overflow:auto">
+    <table style="width:100%;border-collapse:separate;border-spacing:0;font-size:13px">
+      <thead><tr>
+        <th style="position:sticky;top:0;z-index:2;background:var(--pk-surface-2);height:34px;padding:0 12px 0 16px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Employee</th>
+        <sc-for list="{{ cols }}" as="c">
+        <th style="position:sticky;top:0;z-index:2;background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:right;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap;border-left:{{ c.sep }}">{{ c.label }}</th>
+        </sc-for>
+      </tr></thead>
+      <tbody>
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="6">
+        <tr tabindex="0" onClick="{{ r.open }}" onKeyDown="{{ r.key }}" aria-selected="{{ r.sel }}" style="cursor:pointer;background:{{ r.bg }}" style-hover="background:var(--pk-hover)">
+          <td style="height:40px;padding:0 12px 0 16px;border-bottom:1px solid var(--pk-border);white-space:nowrap">
+            <span style="display:flex;align-items:center;gap:10px">
+              <span style="font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-3)">{{ r.id }}</span>
+              <span style="font-weight:500">{{ r.name }}</span>
+              <span style="font-size:11.5px;color:var(--pk-text-3)">{{ r.type }}</span>
+            </span>
+          </td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap">{{ r.gross }}</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);font-variant-numeric:tabular-nums;text-align:right;color:var(--pk-text-2);white-space:nowrap">{{ r.pre }}</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap">{{ r.taxable }}</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);font-variant-numeric:tabular-nums;text-align:right;color:var(--pk-text-2);white-space:nowrap">{{ r.tax }}</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);font-variant-numeric:tabular-nums;text-align:right;color:var(--pk-text-2);white-space:nowrap">{{ r.post }}</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);font-variant-numeric:tabular-nums;text-align:right;font-weight:600;white-space:nowrap">{{ r.net }}</td>
+          <td style="height:40px;padding:0 16px 0 12px;border-bottom:1px solid var(--pk-border);border-left:1px dashed var(--pk-border);font-family:var(--pk-mono);font-variant-numeric:tabular-nums;text-align:right;color:var(--pk-text-3);white-space:nowrap">{{ r.ben }}</td>
+        </tr>
+        </sc-for>
+      </tbody>
+      <tfoot><tr>
+        <td style="position:sticky;bottom:0;background:var(--pk-surface-2);height:40px;padding:0 12px 0 16px;border-top:1px solid var(--pk-border-strong);font-weight:600">Totals ($)</td>
+        <td style="position:sticky;bottom:0;background:var(--pk-surface-2);height:40px;padding:0 12px;border-top:1px solid var(--pk-border-strong);font-family:var(--pk-mono);font-variant-numeric:tabular-nums;text-align:right;font-weight:600;white-space:nowrap">30,265.25</td>
+        <td style="position:sticky;bottom:0;background:var(--pk-surface-2);height:40px;padding:0 12px;border-top:1px solid var(--pk-border-strong);font-family:var(--pk-mono);font-variant-numeric:tabular-nums;text-align:right;font-weight:600;white-space:nowrap">2,233.26</td>
+        <td style="position:sticky;bottom:0;background:var(--pk-surface-2);height:40px;padding:0 12px;border-top:1px solid var(--pk-border-strong);font-family:var(--pk-mono);font-variant-numeric:tabular-nums;text-align:right;font-weight:600;white-space:nowrap">28,031.99</td>
+        <td style="position:sticky;bottom:0;background:var(--pk-surface-2);height:40px;padding:0 12px;border-top:1px solid var(--pk-border-strong);font-family:var(--pk-mono);font-variant-numeric:tabular-nums;text-align:right;font-weight:600;white-space:nowrap">3,211.31</td>
+        <td style="position:sticky;bottom:0;background:var(--pk-surface-2);height:40px;padding:0 12px;border-top:1px solid var(--pk-border-strong);font-family:var(--pk-mono);font-variant-numeric:tabular-nums;text-align:right;font-weight:600;white-space:nowrap">50.00</td>
+        <td style="position:sticky;bottom:0;background:var(--pk-surface-2);height:40px;padding:0 12px;border-top:1px solid var(--pk-border-strong);font-family:var(--pk-mono);font-variant-numeric:tabular-nums;text-align:right;font-weight:700;color:var(--pk-primary-fg);white-space:nowrap">24,770.68</td>
+        <td style="position:sticky;bottom:0;background:var(--pk-surface-2);height:40px;padding:0 16px 0 12px;border-top:1px solid var(--pk-border-strong);border-left:1px dashed var(--pk-border);font-family:var(--pk-mono);font-variant-numeric:tabular-nums;text-align:right;color:var(--pk-text-3);white-space:nowrap">907.96</td>
+      </tr></tfoot>
+    </table>
+    </div>
+    </sc-if>
+    <sc-if value="{{ compact }}">
+    <ul style="margin:0;padding:0;list-style:none">
+      <sc-for list="{{ rows }}" as="r" hint-placeholder-count="6">
+      <li style="border-bottom:1px solid var(--pk-border)">
+        <button onClick="{{ r.open }}" style="width:100%;border:0;background:transparent;text-align:left;padding:12px 14px;cursor:pointer;display:flex;flex-direction:column;gap:8px">
+          <span style="display:flex;align-items:baseline;gap:8px;width:100%">
+            <span style="font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-3)">{{ r.id }}</span>
+            <span style="font-weight:600;flex:1;min-width:0">{{ r.name }}</span>
+            <span style="font-family:var(--pk-mono);font-weight:600;font-size:15px;font-variant-numeric:tabular-nums">{{ r.net }}</span>
+          </span>
+          <span style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%;font-size:11px;color:var(--pk-text-3)">
+            <span style="display:flex;flex-direction:column">Gross<span style="font-family:var(--pk-mono);font-size:12px;color:var(--pk-text)">{{ r.gross }}</span></span>
+            <span style="display:flex;flex-direction:column">Pre-tax<span style="font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-2)">{{ r.pre }}</span></span>
+            <span style="display:flex;flex-direction:column">Tax<span style="font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-2)">{{ r.tax }}</span></span>
+            <span style="display:flex;flex-direction:column;text-align:right">Post-tax<span style="font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-2)">{{ r.post }}</span></span>
+          </span>
+          <span style="font-size:11.5px;color:var(--pk-text-3)">Employer benefits <span style="font-family:var(--pk-mono)">{{ r.ben }}</span> · not deducted</span>
+        </button>
+      </li>
+      </sc-for>
+      <li style="padding:12px 14px;background:var(--pk-surface-2);display:flex;flex-direction:column;gap:4px">
+        <span style="display:flex;justify-content:space-between;font-weight:600"><span>Total net ($)</span><span style="font-family:var(--pk-mono);color:var(--pk-primary-fg)">24,770.68</span></span>
+        <span style="display:flex;justify-content:space-between;font-size:12px;color:var(--pk-text-2)"><span>Total gross ($)</span><span style="font-family:var(--pk-mono)">30,265.25</span></span>
+        <span style="display:flex;justify-content:space-between;font-size:12px;color:var(--pk-text-2)"><span>Total tax ($)</span><span style="font-family:var(--pk-mono)">3,211.31</span></span>
+      </li>
+    </ul>
+    </sc-if>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { tip: null };
+  renderVals() {
+    const p = this.props;
+    const status = p.status ?? 'draft', role = p.role ?? 'admin', stale = !!p.stale, compact = !!p.compact;
+    const isAdmin = role === 'admin', draft = status === 'draft', approved = status === 'approved', paid = status === 'paid';
+    const pills = {
+      draft: { label: 'Draft', bg: 'var(--pk-amber-soft)', fg: 'var(--pk-amber-fg)', dot: 'var(--pk-amber)' },
+      approved: { label: 'Approved', bg: 'var(--pk-primary-soft)', fg: 'var(--pk-primary-soft-fg)', dot: 'var(--pk-primary-fg)' },
+      paid: { label: 'Paid', bg: 'var(--pk-emerald-soft)', fg: 'var(--pk-emerald-fg)', dot: 'var(--pk-emerald)', lock: true },
+    };
+    const idx = { draft: 0, approved: 1, paid: 2 }[status];
+    const steps = [
+      { n: 1, label: 'Draft', sub: p.calcLine ?? 'Not calculated yet' },
+      { n: 2, label: 'Approved', sub: idx >= 1 ? p.approvedLine : 'Needs an admin' },
+      { n: 3, label: 'Paid', sub: idx >= 2 ? p.paidLine : 'Pay date 2026-10-01' },
+    ].map((s, i) => {
+      const done = i < idx || (i === 2 && paid);
+      const cur = i === idx && !done;
+      const em = i === 2 && paid;
+      return {
+        ...s, done, notDone: !done, current: cur ? 'step' : undefined,
+        doneIcon: em ? 'icon-lock' : 'icon-check',
+        bg: done ? (em ? 'var(--pk-emerald)' : 'var(--pk-primary)') : cur ? 'var(--pk-primary-soft)' : 'var(--pk-surface)',
+        fg: done ? '#fff' : cur ? 'var(--pk-primary-soft-fg)' : 'var(--pk-text-3)',
+        border: done ? 'transparent' : cur ? 'var(--pk-primary-fg)' : 'var(--pk-border-strong)',
+        stateLabel: done ? 'Done' : cur ? 'Current' : 'Next',
+        stateFg: done ? (em ? 'var(--pk-emerald-fg)' : 'var(--pk-primary-fg)') : cur ? 'var(--pk-amber-fg)' : 'var(--pk-text-3)',
+        line: !compact && i < 2, lineBg: i < idx ? 'var(--pk-primary)' : 'var(--pk-border)',
+      };
+    });
+    const mk = (key, enabled, tip, click, adminGate) => {
+      const dis = !enabled;
+      return {
+        dis: dis ? 'true' : 'false', tip, lock: adminGate && !isAdmin,
+        showTip: dis && !!tip && this.state.tip === key,
+        enter: () => this.setState({ tip: key }),
+        click: () => { if (!dis) click(); },
+      };
+    };
+    const b = {
+      calc: mk('calc', draft, 'Only draft runs can be calculated', () => p.onCalculate?.(), false),
+      approve: mk('approve', draft && isAdmin && !stale, !isAdmin ? 'Admin only' : stale ? 'Recalculate first: inputs changed' : 'Only draft runs can be approved', () => p.onAsk?.('approve'), true),
+      reopen: mk('reopen', approved && isAdmin, !isAdmin ? 'Admin only' : 'Only approved runs can be reopened', () => p.onAsk?.('reopen'), true),
+      paid: mk('paid', approved && isAdmin, !isAdmin ? 'Admin only' : 'Approve the run first', () => p.onAsk?.('paid'), true),
+    };
+    const slips = p.slips || [];
+    const rows = slips.map(s => {
+      const open = () => p.onOpen?.(s.id);
+      return {
+        id: s.id, name: s.name, type: s.rate.startsWith('Salary') ? 'Salary' : 'Hourly',
+        gross: s.gross, pre: s.pre, taxable: s.taxable, tax: s.tax, post: s.post, net: s.net, ben: s.ben,
+        sel: p.selected === s.id ? 'true' : 'false', bg: p.selected === s.id ? 'var(--pk-primary-soft)' : 'transparent',
+        open, key: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } },
+      };
+    });
+    const cols = ['Gross ($)', 'Pre-tax ($)', 'Taxable ($)', 'Tax ($)', 'Post-tax ($)', 'Net ($)', 'Employer benefits ($)'].map((label, i) => ({ label, sep: i === 6 ? '1px dashed var(--pk-border)' : '0' }));
+    return {
+      pill: pills[status], paid, notPaid: !paid, isManager: role === 'manager',
+      steps, stepCols: compact ? '1fr' : 'repeat(3,minmax(0,1fr))', stepGap: compact ? '10px' : '0',
+      b, tipOff: () => this.setState({ tip: null }),
+      showStale: stale && draft, calcLine: p.calcLine ?? '',
+      paidLine: p.paidLine ?? '', onExport: p.onExport, onCalculate: p.onCalculate,
+      tableHint: paid ? 'Read-only · click a row to view the payslip' : 'Click a row or press Enter to open the payslip',
+      wide: !compact, compact, rows, cols,
+    };
+  }
+}
+</script>
+</body>
+</html>

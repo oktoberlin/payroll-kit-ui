@@ -1,0 +1,175 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* PayrollKit tokens (from the design system). Set data-pk-theme="light" | "dark" on <html>. */
+:root,
+[data-pk-theme] {
+  --pk-sans: var(--font-plex-sans), "IBM Plex Sans", system-ui, sans-serif;
+  --pk-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
+
+  /* sidebar: deep ink in both themes */
+  --pk-side-bg: #0f1424;
+  --pk-side-hover: #182038;
+  --pk-side-active: #252e52;
+  --pk-side-text: #c3c9dc;
+  --pk-side-muted: #8a93ad;
+  --pk-side-border: #1e2539;
+  --pk-side-accent: #a5b0fc;
+}
+
+[data-pk-theme="light"],
+:root:not([data-pk-theme]) {
+  color-scheme: light;
+  --pk-bg: #eef1f6;
+  --pk-surface: #ffffff;
+  --pk-surface-2: #f6f7fa;
+  --pk-hover: #f1f3f8;
+  --pk-border: #e1e5ed;
+  --pk-border-strong: #c8cfdc;
+  --pk-text: #131a2a;
+  --pk-text-2: #475167;
+  --pk-text-3: #5f6980;
+  --pk-primary: #4338ca;
+  --pk-primary-hover: #3730a3;
+  --pk-primary-fg: #4338ca;
+  --pk-primary-soft: #eceefe;
+  --pk-primary-soft-fg: #3730a3;
+  --pk-chart-2: #b4bbf6;
+  --pk-amber: #d97706;
+  --pk-amber-soft: #fdf3dc;
+  --pk-amber-fg: #8a4a03;
+  --pk-emerald: #059669;
+  --pk-emerald-soft: #e3f5ec;
+  --pk-emerald-fg: #05603f;
+  --pk-rose: #e11d48;
+  --pk-rose-soft: #fdeaee;
+  --pk-rose-fg: #a8183a;
+  --pk-focus: #4f46e5;
+  --pk-overlay: rgba(15, 20, 36, 0.4);
+  --pk-inverse: #131a2a;
+  --pk-inverse-fg: #f3f5fa;
+  --pk-skeleton: #e4e8ef;
+  --pk-shadow-1: 0 1px 2px rgba(19, 26, 42, 0.05);
+  --pk-shadow-2: 0 6px 16px -4px rgba(19, 26, 42, 0.12), 0 1px 3px rgba(19, 26, 42, 0.06);
+  --pk-shadow-3: 0 24px 48px -12px rgba(19, 26, 42, 0.3), 0 2px 6px rgba(19, 26, 42, 0.08);
+}
+
+[data-pk-theme="dark"] {
+  color-scheme: dark;
+  --pk-side-bg: #0b0f1d;
+  --pk-side-border: #1a2034;
+  --pk-bg: #080b15;
+  --pk-surface: #10152a;
+  --pk-surface-2: #141a30;
+  --pk-hover: #19203a;
+  --pk-border: #222a43;
+  --pk-border-strong: #343d5c;
+  --pk-text: #e7eaf3;
+  --pk-text-2: #aeb5c9;
+  --pk-text-3: #8f98b0;
+  --pk-primary: #5048e5;
+  --pk-primary-hover: #6259f2;
+  --pk-primary-fg: #a5b0fc;
+  --pk-primary-soft: #1d2152;
+  --pk-primary-soft-fg: #c6ccff;
+  --pk-chart-2: #3a418f;
+  --pk-amber: #f0a32a;
+  --pk-amber-soft: #2c210c;
+  --pk-amber-fg: #f8c46a;
+  --pk-emerald: #2fc28a;
+  --pk-emerald-soft: #0b2a1f;
+  --pk-emerald-fg: #6fe2b2;
+  --pk-rose: #f2557a;
+  --pk-rose-soft: #331522;
+  --pk-rose-fg: #fc9db3;
+  --pk-focus: #8b93ff;
+  --pk-overlay: rgba(2, 4, 10, 0.62);
+  --pk-inverse: #e7eaf3;
+  --pk-inverse-fg: #10152a;
+  --pk-skeleton: #1c2339;
+  --pk-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --pk-shadow-2: 0 8px 20px -6px rgba(0, 0, 0, 0.6), 0 1px 3px rgba(0, 0, 0, 0.4);
+  --pk-shadow-3: 0 28px 56px -12px rgba(0, 0, 0, 0.75), 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--pk-bg);
+  color: var(--pk-text);
+  font-family: var(--pk-sans);
+  font-size: 13px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--pk-focus);
+  outline-offset: 2px;
+}
+
+/* Disabled actions stay focusable so a tooltip can say why ("Admin only"). */
+[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed !important;
+}
+
+::placeholder {
+  color: var(--pk-text-3);
+  opacity: 1;
+}
+
+a {
+  color: var(--pk-primary-fg);
+}
+a:hover {
+  color: var(--pk-primary-hover);
+}
+
+/* money and id cells: monospace, tabular, right aligned (in the components layer so utilities can override) */
+@layer components {
+  .pk-money {
+    font-family: var(--pk-mono);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Tinted borders for banners and badges (Tailwind's /opacity cannot tint CSS-variable colours). */
+.pk-bd-amber {
+  border-color: color-mix(in oklab, var(--pk-amber) 35%, transparent);
+}
+.pk-bd-rose {
+  border-color: color-mix(in oklab, var(--pk-rose) 30%, transparent);
+}
+.pk-bd-emerald {
+  border-color: color-mix(in oklab, var(--pk-emerald) 30%, transparent);
+}

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="display:flex;flex-direction:column;gap:16px">
+
+<sc-if value="{{ conflictMsg }}">
+<div role="alert" style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:10px;background:var(--pk-rose-soft);color:var(--pk-rose-fg);border:1px solid color-mix(in oklab,var(--pk-rose) 30%,transparent)">
+  <i class="icon-octagon-x" style="font-size:16px;margin-top:1px"></i>
+  <div style="flex:1"><strong style="font-weight:600">Cannot delete, it is still in use.</strong> {{ conflictMsg }} <span style="font-family:var(--pk-mono);font-size:11.5px;opacity:.85">409 Conflict</span></div>
+  <button onClick="{{ dismiss }}" aria-label="Dismiss" style="border:0;background:transparent;color:inherit;cursor:pointer;padding:4px"><i class="icon-x"></i></button>
+</div>
+</sc-if>
+
+<sc-if value="{{ v.periods }}">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+    <div>
+      <h1 style="margin:0;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.01em">Pay periods</h1>
+      <p style="margin:2px 0 0;color:var(--pk-text-2)">Each period can have one payroll run. Periods used by a run cannot be deleted.</p>
+    </div>
+    <button onClick="{{ toggleNew }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-primary-hover)"><i class="icon-plus"></i>New period</button>
+  </div>
+  <sc-if value="{{ newOpen }}">
+  <section style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;box-shadow:var(--pk-shadow-1);padding:14px 16px;display:flex;flex-direction:column;gap:12px">
+    <h2 style="margin:0;font-size:14px;font-weight:600">New pay period</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;align-items:start">
+      <label style="display:flex;flex-direction:column;gap:5px;font-weight:500">Start date<input type="date" value="{{ np.start }}" onChange="{{ npSet.start }}" style="height:32px;padding:0 10px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-family:var(--pk-mono);font-weight:400"></label>
+      <label style="display:flex;flex-direction:column;gap:5px;font-weight:500">End date<input type="date" value="{{ np.end }}" onChange="{{ npSet.end }}" aria-invalid="{{ npErrB }}" style="height:32px;padding:0 10px;border-radius:6px;border:1px solid {{ npBorder }};background:var(--pk-surface);font-family:var(--pk-mono);font-weight:400">
+        <sc-if value="{{ npErr }}"><span style="display:flex;gap:5px;align-items:center;font-size:12px;font-weight:400;color:var(--pk-rose-fg)"><i class="icon-circle-alert"></i>{{ npErr }}</span></sc-if>
+      </label>
+      <label style="display:flex;flex-direction:column;gap:5px;font-weight:500">Pay date<input type="date" value="{{ np.pay }}" onChange="{{ npSet.pay }}" style="height:32px;padding:0 10px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-family:var(--pk-mono);font-weight:400"></label>
+      <label style="display:flex;flex-direction:column;gap:5px;font-weight:500">Frequency<select style="height:32px;padding:0 8px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:400"><option>Monthly (12)</option><option>Semi-monthly (24)</option><option>Bi-weekly (26)</option><option>Weekly (52)</option></select></label>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onClick="{{ toggleNew }}" style="height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap">Cancel</button>
+      <button onClick="{{ saveNew }}" style="height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap">Create period</button>
+    </div>
+  </section>
+  </sc-if>
+  <div style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;box-shadow:var(--pk-shadow-1);overflow:hidden">
+    <sc-if value="{{ ready }}">
+    <div style="overflow:auto">
+    <table style="width:100%;border-collapse:separate;border-spacing:0">
+      <thead><tr>
+        <sc-for list="{{ periodCols }}" as="c"><th style="position:sticky;top:0;background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:{{ c.align }};font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">{{ c.label }}</th></sc-for>
+      </tr></thead>
+      <tbody>
+        <sc-for list="{{ periods }}" as="r" hint-placeholder-count="4">
+        <tr style-hover="background:var(--pk-hover)">
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-weight:500">{{ r.label }}</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);white-space:nowrap">{{ r.start }}</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);white-space:nowrap">{{ r.end }}</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);white-space:nowrap">{{ r.pay }}</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);color:var(--pk-text-2)">Monthly</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border)">
+            <sc-if value="{{ r.hasRun }}"><span style="display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 8px 0 7px;border-radius:999px;font-size:12px;font-weight:500;background:{{ r.pill.bg }};color:{{ r.pill.fg }};white-space:nowrap"><span style="width:6px;height:6px;border-radius:50%;background:{{ r.pill.dot }}"></span>{{ r.pill.label }}<sc-if value="{{ r.pill.lock }}"><i class="icon-lock" style="font-size:11px"></i></sc-if></span><span style="margin-left:8px;font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-3)">{{ r.run }}</span></sc-if>
+            <sc-if value="{{ r.noRun }}"><span style="color:var(--pk-text-3)">No run yet</span></sc-if>
+          </td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);text-align:right;white-space:nowrap">
+            <button onClick="{{ r.timesheets }}" title="Open timesheets" aria-label="Open timesheets" style="width:28px;height:28px;border-radius:5px;border:1px solid transparent;background:transparent;color:var(--pk-text-2);cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-surface-2);border-color:var(--pk-border)"><i class="icon-clock"></i></button>
+            <button onClick="{{ r.del }}" title="Delete period" aria-label="Delete period" style="width:28px;height:28px;border-radius:5px;border:1px solid transparent;background:transparent;color:var(--pk-rose-fg);cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-rose-soft)"><i class="icon-trash-2"></i></button>
+          </td>
+        </tr>
+        </sc-for>
+      </tbody>
+    </table>
+    </div>
+    </sc-if>
+    <sc-if value="{{ loading }}"><div aria-busy="true"><sc-for list="{{ skel }}" as="k"><div style="height:40px;display:flex;gap:24px;align-items:center;padding:0 16px;border-bottom:1px solid var(--pk-border)"><span style="height:10px;width:80px;border-radius:4px;background:var(--pk-skeleton);animation:pkPulse 1.4s ease-in-out infinite"></span><span style="height:10px;width:{{ k }};border-radius:4px;background:var(--pk-skeleton);animation:pkPulse 1.4s ease-in-out infinite"></span><span style="margin-left:auto;height:18px;width:70px;border-radius:999px;background:var(--pk-skeleton);animation:pkPulse 1.4s ease-in-out infinite"></span></div></sc-for></div></sc-if>
+    <sc-if value="{{ empty }}">
+    <div style="padding:56px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px">
+      <span style="width:44px;height:44px;border-radius:10px;background:var(--pk-primary-soft);color:var(--pk-primary-soft-fg);display:grid;place-items:center;margin-bottom:6px"><i class="icon-calendar-range" style="font-size:20px"></i></span>
+      <h2 style="margin:0;font-size:15px;font-weight:600">No pay periods</h2>
+      <p style="margin:0 0 10px;color:var(--pk-text-2);max-width:360px">Add your first pay period to start entering timesheets and running payroll.</p>
+      <button onClick="{{ toggleNew }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap"><i class="icon-plus"></i>New period</button>
+    </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+<sc-if value="{{ v.timesheets }}">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+    <div>
+      <h1 style="margin:0;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.01em">Timesheets</h1>
+      <p style="margin:2px 0 0;color:var(--pk-text-2)">Hours for hourly employees. Salaried employees are paid from their annual salary.</p>
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;color:var(--pk-text-2)">Pay period
+      <select value="{{ tsPeriod }}" onChange="{{ setTsPeriod }}" style="height:32px;padding:0 8px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);color:var(--pk-text)"><option value="sep">Sep 2026 · draft run</option><option value="aug">Aug 2026 · paid</option></select>
+    </label>
+  </div>
+  <sc-if value="{{ tsLocked }}">
+  <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--pk-surface);border:1px solid var(--pk-border)"><i class="icon-lock" style="color:var(--pk-emerald-fg)"></i><span><strong style="font-weight:600">Aug 2026 is paid.</strong> <span style="color:var(--pk-text-2)">Its timesheets are locked and shown read-only.</span></span></div>
+  </sc-if>
+  <sc-if value="{{ tsApprovedNote }}">
+  <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--pk-primary-soft);color:var(--pk-primary-soft-fg)"><i class="icon-info"></i><span>The Sep 2026 run is approved. Changes here only take effect if an admin reopens and recalculates it.</span></div>
+  </sc-if>
+  <div style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;box-shadow:var(--pk-shadow-1);overflow:hidden">
+    <div style="overflow:auto">
+    <table style="width:100%;border-collapse:separate;border-spacing:0">
+      <thead><tr>
+        <th style="background:var(--pk-surface-2);height:34px;padding:0 12px 0 16px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Employee</th>
+        <th style="background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:right;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Rate ($ / h)</th>
+        <th style="background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:right;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);width:150px;white-space:nowrap">Regular hours</th>
+        <th style="background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:right;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);width:150px;white-space:nowrap">Overtime hours</th>
+        <th style="background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:right;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">OT ×</th>
+        <th style="background:var(--pk-surface-2);height:34px;padding:0 16px 0 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Status</th>
+      </tr></thead>
+      <tbody>
+        <sc-for list="{{ ts }}" as="r" hint-placeholder-count="6">
+        <tr>
+          <td style="height:40px;padding:0 12px 0 16px;border-bottom:1px solid var(--pk-border);white-space:nowrap"><span style="font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-3);margin-right:8px">{{ r.id }}</span><span style="font-weight:500">{{ r.name }}</span></td>
+          <sc-if value="{{ r.salaried }}">
+          <td colspan="4" style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);color:var(--pk-text-3);text-align:center;background:var(--pk-surface-2)">Salaried · no timesheet needed</td>
+          </sc-if>
+          <sc-if value="{{ r.hourly }}">
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);text-align:right;white-space:nowrap">{{ r.rate }}</td>
+          <td style="height:40px;padding:3px 8px;border-bottom:1px solid var(--pk-border);vertical-align:top">
+            <input value="{{ r.reg }}" onChange="{{ r.setReg }}" readonly="{{ r.ro }}" inputmode="decimal" aria-label="{{ r.regLabel }}" aria-invalid="{{ r.regInv }}" style="width:100%;height:32px;padding:0 8px;border-radius:5px;border:1px solid {{ r.regB }};background:{{ r.inBg }};font-family:var(--pk-mono);font-variant-numeric:tabular-nums;text-align:right">
+          </td>
+          <td style="height:40px;padding:3px 8px;border-bottom:1px solid var(--pk-border);vertical-align:top">
+            <input value="{{ r.ot }}" onChange="{{ r.setOt }}" readonly="{{ r.ro }}" inputmode="decimal" aria-label="{{ r.otLabel }}" aria-invalid="{{ r.otInv }}" style="width:100%;height:32px;padding:0 8px;border-radius:5px;border:1px solid {{ r.otB }};background:{{ r.inBg }};font-family:var(--pk-mono);font-variant-numeric:tabular-nums;text-align:right">
+          </td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);text-align:right;color:var(--pk-text-2);white-space:nowrap">1.50</td>
+          </sc-if>
+          <td style="height:40px;padding:0 16px 0 12px;border-bottom:1px solid var(--pk-border);white-space:nowrap">
+            <sc-if value="{{ r.err }}"><span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--pk-rose-fg)"><i class="icon-circle-alert"></i>{{ r.err }}</span></sc-if>
+            <sc-if value="{{ r.edited }}"><span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--pk-amber-fg)"><i class="icon-pencil"></i>Edited, not saved</span></sc-if>
+            <sc-if value="{{ r.saved }}"><span style="font-size:12px;color:var(--pk-text-3)">{{ r.savedText }}</span></sc-if>
+          </td>
+        </tr>
+        </sc-for>
+      </tbody>
+    </table>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px 10px 16px;border-top:1px solid var(--pk-border);background:var(--pk-surface-2)">
+      <span style="color:var(--pk-text-2);font-size:12.5px">{{ dirtyLabel }}</span>
+      <span style="flex:1"></span>
+      <button onClick="{{ discard }}" aria-disabled="{{ noDirty }}" style="height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap">Discard</button>
+      <button onClick="{{ saveTs }}" aria-disabled="{{ cantSave }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap"><i class="icon-check"></i>Save timesheets</button>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ v.deductions }}">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+    <div>
+      <h1 style="margin:0;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.01em">Deductions &amp; benefits</h1>
+      <p style="margin:2px 0 0;color:var(--pk-text-2)">Deductions come out of employee pay. Benefits are paid by the employer and recorded, not deducted.</p>
+    </div>
+    <button onClick="{{ newType }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap"><i class="icon-plus"></i>New type</button>
+  </div>
+  <section style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;box-shadow:var(--pk-shadow-1);overflow:hidden">
+    <div style="padding:10px 16px;border-bottom:1px solid var(--pk-border)"><h2 style="margin:0;font-size:14px;font-weight:600">Types</h2></div>
+    <sc-if value="{{ ready }}">
+    <div style="overflow:auto">
+    <table style="width:100%;border-collapse:separate;border-spacing:0">
+      <thead><tr>
+        <sc-for list="{{ typeCols }}" as="c"><th style="background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:{{ c.align }};font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">{{ c.label }}</th></sc-for>
+      </tr></thead>
+      <tbody>
+        <sc-for list="{{ types }}" as="t" hint-placeholder-count="4">
+        <tr style-hover="background:var(--pk-hover)">
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);font-weight:500;white-space:nowrap">{{ t.code }}</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);white-space:nowrap">{{ t.name }}</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border)"><span style="display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;font-size:12px;border:1px {{ t.kindBorder }} var(--pk-border-strong);color:var(--pk-text-2);white-space:nowrap"><i class="{{ t.kindIcon }}" style="font-size:11px"></i>{{ t.kind }}</span></td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);color:var(--pk-text-2);white-space:nowrap">{{ t.method }}</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);text-align:right;white-space:nowrap">{{ t.value }}</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border)">
+            <sc-if value="{{ t.canToggle }}">
+            <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer"><button role="switch" aria-checked="{{ t.preStr }}" aria-label="{{ t.preLabel }}" onClick="{{ t.toggle }}" style="width:30px;height:18px;border-radius:999px;border:0;padding:2px;cursor:pointer;background:{{ t.swBg }};display:flex;justify-content:{{ t.swJust }}"><span style="width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3)"></span></button><span style="font-size:12px;color:var(--pk-text-2)">{{ t.preText }}</span></label>
+            </sc-if>
+            <sc-if value="{{ t.isBenefit }}"><span style="font-size:12px;color:var(--pk-text-3)">n/a · not deducted</span></sc-if>
+          </td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);text-align:right;white-space:nowrap">{{ t.count }}</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);text-align:right;white-space:nowrap">
+            <button onClick="{{ t.edit }}" aria-label="Edit" title="Edit" style="width:28px;height:28px;border-radius:5px;border:1px solid transparent;background:transparent;color:var(--pk-text-2);cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-surface-2);border-color:var(--pk-border)"><i class="icon-pencil"></i></button>
+            <button onClick="{{ t.del }}" aria-label="Delete" title="Delete" style="width:28px;height:28px;border-radius:5px;border:1px solid transparent;background:transparent;color:var(--pk-rose-fg);cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-rose-soft)"><i class="icon-trash-2"></i></button>
+          </td>
+        </tr>
+        </sc-for>
+      </tbody>
+    </table>
+    </div>
+    </sc-if>
+    <sc-if value="{{ loading }}"><div aria-busy="true"><sc-for list="{{ skel }}" as="k"><div style="height:40px;display:flex;gap:24px;align-items:center;padding:0 16px;border-bottom:1px solid var(--pk-border)"><span style="height:10px;width:56px;border-radius:4px;background:var(--pk-skeleton);animation:pkPulse 1.4s ease-in-out infinite"></span><span style="height:10px;width:{{ k }};border-radius:4px;background:var(--pk-skeleton);animation:pkPulse 1.4s ease-in-out infinite"></span></div></sc-for></div></sc-if>
+    <sc-if value="{{ empty }}">
+    <div style="padding:48px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px">
+      <span style="width:44px;height:44px;border-radius:10px;background:var(--pk-primary-soft);color:var(--pk-primary-soft-fg);display:grid;place-items:center;margin-bottom:6px"><i class="icon-percent" style="font-size:20px"></i></span>
+      <h2 style="margin:0;font-size:15px;font-weight:600">No deduction types</h2>
+      <p style="margin:0 0 10px;color:var(--pk-text-2);max-width:380px">Add retirement, health plans or salary advances, then assign them to employees.</p>
+      <button onClick="{{ newType }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap"><i class="icon-plus"></i>New type</button>
+    </div>
+    </sc-if>
+  </section>
+  <sc-if value="{{ ready }}">
+  <section style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;box-shadow:var(--pk-shadow-1);overflow:hidden">
+    <div style="padding:10px 16px;border-bottom:1px solid var(--pk-border);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <h2 style="margin:0;font-size:14px;font-weight:600">Assignments</h2>
+      <span style="font-size:12px;color:var(--pk-text-3)">Leave the override empty to use the type default.</span>
+    </div>
+    <div style="overflow:auto">
+    <table style="width:100%;border-collapse:separate;border-spacing:0">
+      <thead><tr>
+        <th style="background:var(--pk-surface-2);height:34px;padding:0 12px 0 16px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Employee</th>
+        <sc-for list="{{ codes }}" as="c"><th style="background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);white-space:nowrap">{{ c }}</th></sc-for>
+        <th style="background:var(--pk-surface-2);height:34px;width:90px;border-bottom:1px solid var(--pk-border);white-space:nowrap"></th>
+      </tr></thead>
+      <tbody>
+        <sc-for list="{{ assign }}" as="a" hint-placeholder-count="6">
+        <tr style="background:{{ a.bg }}">
+          <td style="height:40px;padding:0 12px 0 16px;border-bottom:1px solid var(--pk-border);white-space:nowrap"><span style="font-family:var(--pk-mono);font-size:12px;color:var(--pk-text-3);margin-right:8px">{{ a.id }}</span><span style="font-weight:500">{{ a.name }}</span></td>
+          <sc-for list="{{ a.cells }}" as="c">
+          <td style="height:40px;padding:4px 12px;border-bottom:1px solid var(--pk-border);white-space:nowrap">
+            <sc-if value="{{ c.view }}">
+              <sc-if value="{{ c.on }}"><span style="display:inline-flex;align-items:center;gap:6px"><i class="icon-check" style="color:var(--pk-primary-fg)"></i><span style="font-family:var(--pk-mono);font-size:12.5px;font-weight:{{ c.weight }}">{{ c.display }}</span><span style="font-size:11px;color:var(--pk-text-3)">{{ c.src }}</span></span></sc-if>
+              <sc-if value="{{ c.off }}"><span style="color:var(--pk-text-3)">—</span></sc-if>
+            </sc-if>
+            <sc-if value="{{ c.editing }}">
+              <span style="display:inline-flex;align-items:center;gap:6px">
+                <input type="checkbox" checked="{{ c.on }}" onChange="{{ c.toggle }}" aria-label="{{ c.label }}" style="width:15px;height:15px;accent-color:var(--pk-primary)">
+                <input value="{{ c.override }}" onChange="{{ c.setOverride }}" placeholder="{{ c.def }}" disabled="{{ c.off }}" aria-label="{{ c.overrideLabel }}" style="width:84px;height:28px;padding:0 6px;border-radius:5px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-family:var(--pk-mono);font-size:12px;text-align:right">
+              </span>
+            </sc-if>
+          </td>
+          </sc-for>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid var(--pk-border);text-align:right">
+            <sc-if value="{{ a.notEditing }}"><button onClick="{{ a.edit }}" style="height:28px;padding:0 10px;border-radius:5px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);cursor:pointer;font-size:12px;font-weight:500;white-space:nowrap">Edit</button></sc-if>
+            <sc-if value="{{ a.isEditing }}"><button onClick="{{ a.save }}" style="height:28px;padding:0 10px;border-radius:5px;border:1px solid transparent;background:var(--pk-primary);color:#fff;cursor:pointer;font-size:12px;font-weight:500;white-space:nowrap">Save</button></sc-if>
+          </td>
+        </tr>
+        </sc-for>
+      </tbody>
+    </table>
+    </div>
+  </section>
+  </sc-if>
+</sc-if>
+
+<sc-if value="{{ v.tax }}">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+    <div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <h1 style="margin:0;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.01em">Tax tables</h1>
+        <span style="display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border-radius:999px;background:var(--pk-amber-soft);color:var(--pk-amber-fg);font-size:12px;font-weight:600;border:1px solid color-mix(in oklab,var(--pk-amber) 35%,transparent);white-space:nowrap"><i class="icon-flask-conical"></i>Illustrative only</span>
+      </div>
+      <p style="margin:2px 0 0;color:var(--pk-text-2)">Annual progressive brackets. Taxable pay is annualised, taxed, then divided by periods per year.</p>
+    </div>
+  </div>
+  <section style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;box-shadow:var(--pk-shadow-1);overflow:hidden">
+    <div style="padding:12px 16px;border-bottom:1px solid var(--pk-border);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <i class="icon-landmark" style="color:var(--pk-text-3)"></i>
+      <h2 style="margin:0;font-size:14px;font-weight:600">Illustrative progressive table</h2>
+      <span style="font-size:12px;color:var(--pk-text-3)">Used by 6 employees · not real tax rules</span>
+      <span style="margin-left:auto;display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 8px;border-radius:999px;border:1px solid var(--pk-border-strong);font-size:11.5px;color:var(--pk-text-2);white-space:nowrap"><i class="icon-flask-conical" style="font-size:11px"></i>Illustrative only</span>
+    </div>
+    <sc-if value="{{ taxErrCount }}">
+    <div role="alert" style="margin:12px 16px 0;display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:8px;background:var(--pk-rose-soft);color:var(--pk-rose-fg)">
+      <i class="icon-circle-alert" style="font-size:16px;margin-top:1px"></i>
+      <div><strong style="font-weight:600">{{ taxErrCount }}</strong>
+        <ul style="margin:4px 0 0;padding-left:16px"><sc-for list="{{ taxErrList }}" as="m"><li>{{ m }}</li></sc-for></ul>
+      </div>
+    </div>
+    </sc-if>
+    <div style="overflow:auto;padding:4px 0">
+    <table style="width:100%;border-collapse:separate;border-spacing:0">
+      <thead><tr>
+        <th style="height:34px;padding:0 12px 0 16px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);width:48px;white-space:nowrap">#</th>
+        <th style="height:34px;padding:0 12px;text-align:right;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Lower ($ / yr)</th>
+        <th style="height:34px;padding:0 12px;text-align:right;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Upper ($ / yr)</th>
+        <th style="height:34px;padding:0 12px;text-align:right;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);width:140px;white-space:nowrap">Rate (%)</th>
+        <th style="height:34px;width:48px;border-bottom:1px solid var(--pk-border);white-space:nowrap"></th>
+      </tr></thead>
+      <tbody>
+        <sc-for list="{{ brackets }}" as="b" hint-placeholder-count="4">
+        <tr>
+          <td style="padding:6px 12px 6px 16px;border-bottom:1px solid var(--pk-border);font-family:var(--pk-mono);color:var(--pk-text-3);vertical-align:top;line-height:32px;white-space:nowrap">{{ b.n }}</td>
+          <td style="padding:6px 12px;border-bottom:1px solid var(--pk-border);vertical-align:top">
+            <input value="{{ b.lower }}" onChange="{{ b.setLower }}" aria-label="{{ b.lowerLabel }}" aria-invalid="{{ b.lowerInv }}" style="width:100%;height:32px;padding:0 8px;border-radius:5px;border:1px solid {{ b.lowerB }};background:var(--pk-surface);font-family:var(--pk-mono);text-align:right">
+            <sc-if value="{{ b.lowerErr }}"><div style="margin-top:4px;font-size:12px;color:var(--pk-rose-fg);display:flex;gap:5px;align-items:center;justify-content:flex-end"><i class="icon-circle-alert"></i>{{ b.lowerErr }}</div></sc-if>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid var(--pk-border);vertical-align:top">
+            <span style="display:flex;align-items:center;gap:10px">
+              <sc-if value="{{ b.capped }}"><input value="{{ b.upper }}" onChange="{{ b.setUpper }}" aria-label="{{ b.upperLabel }}" aria-invalid="{{ b.upperInv }}" style="flex:1;min-width:0;height:32px;padding:0 8px;border-radius:5px;border:1px solid {{ b.upperB }};background:var(--pk-surface);font-family:var(--pk-mono);text-align:right"></sc-if>
+              <sc-if value="{{ b.noCap }}"><span style="flex:1;height:32px;display:flex;align-items:center;justify-content:flex-end;padding:0 8px;border-radius:5px;border:1px dashed var(--pk-border-strong);color:var(--pk-text-2);gap:6px"><i class="icon-infinity"></i>No cap</span></sc-if>
+              <label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--pk-text-2);white-space:nowrap;cursor:pointer"><input type="checkbox" checked="{{ b.noCap }}" onChange="{{ b.toggleCap }}" style="accent-color:var(--pk-primary)">No cap</label>
+            </span>
+            <sc-if value="{{ b.upperErr }}"><div style="margin-top:4px;font-size:12px;color:var(--pk-rose-fg);display:flex;gap:5px;align-items:center;justify-content:flex-end"><i class="icon-circle-alert"></i>{{ b.upperErr }}</div></sc-if>
+          </td>
+          <td style="padding:6px 12px;border-bottom:1px solid var(--pk-border);vertical-align:top">
+            <span style="position:relative;display:flex;align-items:center"><input value="{{ b.rate }}" onChange="{{ b.setRate }}" aria-label="{{ b.rateLabel }}" aria-invalid="{{ b.rateInv }}" style="width:100%;height:32px;padding:0 24px 0 8px;border-radius:5px;border:1px solid {{ b.rateB }};background:var(--pk-surface);font-family:var(--pk-mono);text-align:right"><span style="position:absolute;right:8px;color:var(--pk-text-3);font-family:var(--pk-mono)">%</span></span>
+            <sc-if value="{{ b.rateErr }}"><div style="margin-top:4px;font-size:12px;color:var(--pk-rose-fg);display:flex;gap:5px;align-items:center;justify-content:flex-end"><i class="icon-circle-alert"></i>{{ b.rateErr }}</div></sc-if>
+          </td>
+          <td style="padding:6px 12px 6px 0;border-bottom:1px solid var(--pk-border);vertical-align:top;text-align:right"><button onClick="{{ b.remove }}" aria-label="Remove bracket" style="width:32px;height:32px;border-radius:5px;border:1px solid transparent;background:transparent;color:var(--pk-text-3);cursor:pointer;white-space:nowrap" style-hover="background:var(--pk-rose-soft);color:var(--pk-rose-fg)"><i class="icon-x"></i></button></td>
+        </tr>
+        </sc-for>
+      </tbody>
+    </table>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid var(--pk-border);background:var(--pk-surface-2)">
+      <button onClick="{{ addBracket }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap"><i class="icon-plus"></i>Add bracket</button>
+      <span style="font-size:12px;color:var(--pk-text-3)">Changes apply to draft runs the next time they are calculated.</span>
+      <span style="flex:1"></span>
+      <button onClick="{{ resetTax }}" style="height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap">Reset</button>
+      <button onClick="{{ saveTax }}" aria-disabled="{{ taxBlocked }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid transparent;background:var(--pk-primary);color:#fff;font-weight:500;cursor:pointer;white-space:nowrap"><i class="icon-check"></i>Save brackets</button>
+    </div>
+  </section>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  TS = [['E001', 'Ava Stone', null], ['E002', 'Ben Carter', null], ['E003', 'Chloe Diaz', null], ['E004', 'Dev Patel', '22.50', '160.00', '12.00', '160.00', '6.00'], ['E005', 'Ella Moore', '18.75', '120.00', '0.00', '120.00', '0.00'], ['E006', 'Finn Lee', '31.00', '168.00', '6.50', '168.00', '4.00']];
+  BR = [['0.00', '12,000.00', '0.00'], ['12,000.00', '50,000.00', '12.00'], ['50,000.00', '100,000.00', '22.00'], ['100,000.00', null, '30.00']];
+  init(v) {
+    const ts = {}; this.TS.forEach(r => { if (r[2]) ts[r[0]] = { reg: r[3], ot: r[4] }; });
+    if (v === 'edited') { ts.E006 = { reg: '168.00', ot: '8.00' }; ts.E005 = { reg: '12O', ot: '0.00' }; }
+    const br = this.BR.map(([l, u, r]) => ({ lower: l, upper: u ?? '', noCap: u === null, rate: r }));
+    if (v === 'invalid') { br[2].lower = '48,000.00'; br[3].rate = '130'; }
+    return { ts, tsPeriod: 'sep', br, conflict: v === 'conflict' ? 'HEALTH is assigned to 6 employees. Remove those assignments first, or keep the type and stop assigning it.' : '', pre: { RET: true, HEALTH: true, LOAN: false }, editRow: v === 'assign' ? 'E003' : null, over: v === 'assign' ? { 'E003:RET': '8.00' } : {}, newOpen: v === 'newPeriod', np: v === 'newPeriod' ? { start: '2026-11-01', end: '2026-10-30', pay: '2026-12-01' } : { start: '2026-11-01', end: '2026-11-30', pay: '2026-12-01' }, npTried: v === 'newPeriod', extraPeriod: false };
+  }
+  state = this.init(this.props.variant);
+  componentDidUpdate(p) { if (p.variant !== this.props.variant || p.view !== this.props.view) this.setState(this.init(this.props.variant)); }
+  num(s) { const t = String(s).replace(/,/g, '').trim(); return /^\d+(\.\d{1,2})?$/.test(t) ? Number(t) : NaN; }
+  fmt(n) { return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+  taxErrors(br) {
+    const errs = br.map(() => ({})), list = [];
+    br.forEach((b, i) => {
+      const lo = this.num(b.lower), up = b.noCap ? null : this.num(b.upper), rate = this.num(b.rate);
+      if (isNaN(lo)) { errs[i].lower = 'Enter an amount'; list.push(`Bracket ${i + 1}: lower must be an amount with up to 2 decimals.`); }
+      else if (i === 0 && lo !== 0) { errs[i].lower = 'First bracket starts at 0.00'; list.push('Bracket 1 must start at 0.00.'); }
+      else if (i > 0) {
+        const prev = br[i - 1], pu = prev.noCap ? null : this.num(prev.upper);
+        if (pu !== null && !isNaN(pu) && pu !== lo) { errs[i].lower = `Should be ${this.fmt(pu)}`; list.push(`Bracket ${i + 1} starts at ${this.fmt(lo)} but bracket ${i} ends at ${this.fmt(pu)}. Brackets must be contiguous.`); }
+      }
+      if (!b.noCap) {
+        if (isNaN(up)) { errs[i].upper = 'Enter an amount or tick No cap'; list.push(`Bracket ${i + 1}: upper is missing.`); }
+        else if (!isNaN(lo) && up <= lo) { errs[i].upper = 'Must be greater than lower'; list.push(`Bracket ${i + 1}: upper must be greater than lower.`); }
+      } else if (i !== br.length - 1) { errs[i].upper = 'Only the last bracket can have no cap'; list.push(`Bracket ${i + 1}: only the last bracket can have no cap.`); }
+      if (i === br.length - 1 && !b.noCap) { list.push('The last bracket must have no cap so every income is covered.'); errs[i].upper = errs[i].upper || 'Last bracket needs No cap'; }
+      if (isNaN(rate) || rate < 0 || rate > 100) { errs[i].rate = 'Between 0 and 100'; list.push(`Bracket ${i + 1}: rate must be between 0 and 100 %.`); }
+    });
+    return { errs, list };
+  }
+
+  renderVals() {
+    const p = this.props, st = this.state, view = p.view ?? 'periods', ls = p.listState ?? 'ready';
+    const toast = (...a) => p.onToast?.(...a);
+    const pill = (s) => s === 'paid' ? { label: 'Paid', bg: 'var(--pk-emerald-soft)', fg: 'var(--pk-emerald-fg)', dot: 'var(--pk-emerald)', lock: true } : s === 'approved' ? { label: 'Approved', bg: 'var(--pk-primary-soft)', fg: 'var(--pk-primary-soft-fg)', dot: 'var(--pk-primary-fg)' } : { label: 'Draft', bg: 'var(--pk-amber-soft)', fg: 'var(--pk-amber-fg)', dot: 'var(--pk-amber)' };
+    const runStatus = p.runStatus ?? 'draft';
+    const periodsRaw = [
+      ...(st.extraPeriod ? [['Nov 2026', '2026-11-01', '2026-11-30', '2026-12-01', null, null]] : []),
+      ['Oct 2026', '2026-10-01', '2026-10-31', '2026-11-02', null, null],
+      ['Sep 2026', '2026-09-01', '2026-09-30', '2026-10-01', runStatus, 'Run #3'],
+      ['Aug 2026', '2026-08-01', '2026-08-31', '2026-09-01', 'paid', 'Run #2'],
+      ['Jul 2026', '2026-07-01', '2026-07-31', '2026-08-03', 'paid', 'Run #1'],
+    ];
+    const periods = periodsRaw.map(([label, start, end, pay, s, run]) => ({
+      label, start, end, pay, run, hasRun: !!s, noRun: !s, pill: s ? pill(s) : null,
+      timesheets: () => p.go?.('timesheets'),
+      del: () => { if (s) this.setState({ conflict: `Pay period ${label} is referenced by payroll ${run.toLowerCase()}.` }); else { if (label === 'Nov 2026') this.setState({ extraPeriod: false }); toast('success', `Deleted pay period ${label}`); } },
+    }));
+    const np = st.np, npErr = st.npTried && np.end < np.start ? 'end_date must be on or after start_date' : '';
+
+    // timesheets
+    const locked = st.tsPeriod === 'aug';
+    let dirty = 0, bad = 0;
+    const ts = this.TS.map(r => {
+      if (!r[2]) return { id: r[0], name: r[1], salaried: true, hourly: false };
+      const cur = locked ? { reg: r[5], ot: r[6] } : st.ts[r[0]];
+      const regOk = !isNaN(this.num(cur.reg)), otOk = !isNaN(this.num(cur.ot));
+      const edited = !locked && (cur.reg !== r[3] || cur.ot !== r[4]);
+      if (edited) dirty++; if (!regOk || !otOk) bad++;
+      const set = (k) => (e) => { if (locked) return; const v = e.target.value; this.setState(s => ({ ts: { ...s.ts, [r[0]]: { ...s.ts[r[0]], [k]: v } } })); };
+      return {
+        id: r[0], name: r[1], salaried: false, hourly: true, rate: r[2], reg: cur.reg, ot: cur.ot, ro: locked,
+        regLabel: `${r[1]} regular hours`, otLabel: `${r[1]} overtime hours`, regInv: !regOk, otInv: !otOk,
+        regB: !regOk ? 'var(--pk-rose)' : edited && cur.reg !== r[3] ? 'var(--pk-amber)' : 'var(--pk-border-strong)',
+        otB: !otOk ? 'var(--pk-rose)' : edited && cur.ot !== r[4] ? 'var(--pk-amber)' : 'var(--pk-border-strong)',
+        inBg: locked ? 'var(--pk-surface-2)' : 'var(--pk-surface)', setReg: set('reg'), setOt: set('ot'),
+        err: !regOk || !otOk ? 'Hours ≥ 0, max 2 decimals' : '', edited: edited && regOk && otOk, saved: !edited && regOk && otOk,
+        savedText: locked ? 'Locked' : 'Saved',
+      };
+    });
+
+    // deductions
+    const types = [
+      ['RET', 'Retirement 5%', 'deduction', 'percent', '5.00 %', 6], ['HEALTH', 'Health plan', 'deduction', 'fixed', '120.00', 6],
+      ['LOAN', 'Salary advance repayment', 'deduction', 'fixed', '50.00', 1], ['MATCH', 'Employer retirement match', 'benefit', 'percent', '3.00 %', 6],
+    ].map(([code, name, kind, method, value, count]) => {
+      const isBenefit = kind === 'benefit', on = !!st.pre[code];
+      return {
+        code, name, kind: isBenefit ? 'Employer benefit' : 'Deduction', kindIcon: isBenefit ? 'icon-gift' : 'icon-minus', kindBorder: isBenefit ? 'dashed' : 'solid',
+        method: method === 'percent' ? 'Percent of gross' : 'Fixed amount', value, count,
+        canToggle: !isBenefit, isBenefit, preStr: on ? 'true' : 'false', preText: on ? 'Pre-tax' : 'Post-tax', preLabel: `${code} pre-tax`,
+        swBg: on ? 'var(--pk-primary)' : 'var(--pk-border-strong)', swJust: on ? 'flex-end' : 'flex-start',
+        toggle: () => { this.setState(s => ({ pre: { ...s.pre, [code]: !s.pre[code] } })); p.onInputsChanged?.(); toast('info', `${code} is now ${on ? 'post-tax' : 'pre-tax'}`, 'Draft runs need recalculation'); },
+        edit: () => toast('info', `Editing ${code}`, 'PATCH /api/deduction-types/{id}/'),
+        del: () => this.setState({ conflict: `${code} is assigned to ${count} employee${count > 1 ? 's' : ''}. Remove those assignments first.` }),
+      };
+    });
+    const codes = ['RET', 'HEALTH', 'LOAN', 'MATCH'], defs = { RET: '5.00 %', HEALTH: '120.00', LOAN: '50.00', MATCH: '3.00 %' };
+    const has = (id, c) => st.over[`${id}:${c}:off`] ? false : st.over[`${id}:${c}:on`] ? true : (c !== 'LOAN' || id === 'E002');
+    const assign = this.TS.map(([id, name]) => {
+      const editing = st.editRow === id;
+      return {
+        id, name, isEditing: editing, notEditing: !editing, bg: editing ? 'var(--pk-primary-soft)' : 'transparent',
+        edit: () => this.setState({ editRow: id }),
+        save: () => { this.setState({ editRow: null }); p.onInputsChanged?.(); toast('success', `Assignments saved for ${name}`, 'Draft runs need recalculation'); },
+        cells: codes.map(c => {
+          const on = has(id, c), ov = st.over[`${id}:${c}`] || '';
+          return {
+            on, off: !on, view: !editing, editing, def: defs[c], override: ov, label: `${c} for ${name}`, overrideLabel: `${c} override for ${name}`,
+            display: ov ? (defs[c].includes('%') ? `${ov} %` : ov) : defs[c], src: ov ? 'override' : 'default', weight: ov ? '600' : '400',
+            toggle: () => this.setState(s => ({ over: { ...s.over, [`${id}:${c}:on`]: !on, [`${id}:${c}:off`]: on } })),
+            setOverride: (e) => { const v = e.target.value; this.setState(s => ({ over: { ...s.over, [`${id}:${c}`]: v } })); },
+          };
+        }),
+      };
+    });
+
+    // tax
+    const { errs, list } = this.taxErrors(st.br);
+    const setB = (i, k) => (e) => { const v = e.target.value; this.setState(s => ({ br: s.br.map((b, j) => j === i ? { ...b, [k]: v } : b) })); };
+    const brackets = st.br.map((b, i) => {
+      const E = errs[i];
+      return {
+        n: i + 1, lower: b.lower, upper: b.upper, rate: b.rate, noCap: b.noCap, capped: !b.noCap,
+        lowerErr: E.lower || '', upperErr: E.upper || '', rateErr: E.rate || '',
+        lowerInv: !!E.lower, upperInv: !!E.upper, rateInv: !!E.rate,
+        lowerB: E.lower ? 'var(--pk-rose)' : 'var(--pk-border-strong)', upperB: E.upper ? 'var(--pk-rose)' : 'var(--pk-border-strong)', rateB: E.rate ? 'var(--pk-rose)' : 'var(--pk-border-strong)',
+        lowerLabel: `Bracket ${i + 1} lower`, upperLabel: `Bracket ${i + 1} upper`, rateLabel: `Bracket ${i + 1} rate`,
+        setLower: setB(i, 'lower'), setUpper: setB(i, 'upper'), setRate: setB(i, 'rate'),
+        toggleCap: () => this.setState(s => ({ br: s.br.map((x, j) => j === i ? { ...x, noCap: !x.noCap } : x) })),
+        remove: () => this.setState(s => ({ br: s.br.filter((_, j) => j !== i) })),
+      };
+    });
+    const uniq = [...new Set(list)];
+    const align = (a) => a.map(([label, al]) => ({ label, align: al || 'left' }));
+    return {
+      v: { periods: view === 'periods', timesheets: view === 'timesheets', deductions: view === 'deductions', tax: view === 'tax' },
+      ready: ls === 'ready', loading: ls === 'loading', empty: ls === 'empty', skel: ['40%', '55%', '35%', '48%'],
+      conflictMsg: st.conflict, dismiss: () => this.setState({ conflict: '' }),
+      periodCols: align([['Period'], ['Start'], ['End'], ['Pay date'], ['Frequency'], ['Payroll run'], ['', 'right']]), periods,
+      newOpen: st.newOpen, toggleNew: () => this.setState(s => ({ newOpen: !s.newOpen, npTried: false })),
+      np, npErr, npErrB: !!npErr, npBorder: npErr ? 'var(--pk-rose)' : 'var(--pk-border-strong)',
+      npSet: { start: (e) => this.setState({ np: { ...np, start: e.target.value } }), end: (e) => this.setState({ np: { ...np, end: e.target.value } }), pay: (e) => this.setState({ np: { ...np, pay: e.target.value } }) },
+      saveNew: () => { if (np.end < np.start) { this.setState({ npTried: true }); return; } this.setState({ newOpen: false, extraPeriod: true, npTried: false }); toast('success', 'Pay period Nov 2026 created'); },
+      tsPeriod: st.tsPeriod, setTsPeriod: (e) => this.setState({ tsPeriod: e.target.value }), tsLocked: locked, tsApprovedNote: !locked && runStatus === 'approved',
+      ts, dirtyLabel: locked ? 'Read-only' : bad ? `${bad} row${bad > 1 ? 's' : ''} with invalid hours` : dirty ? `${dirty} unsaved change${dirty > 1 ? 's' : ''}` : 'All changes saved',
+      noDirty: !dirty || locked ? 'true' : 'false', cantSave: !dirty || bad || locked ? 'true' : 'false',
+      discard: () => { if (dirty) this.setState({ ts: this.init('').ts }); },
+      saveTs: () => { if (!dirty || bad || locked) return; this.TS.forEach(r => { if (r[2]) { r[3] = st.ts[r[0]].reg; r[4] = st.ts[r[0]].ot; } }); this.forceUpdate(); p.onInputsChanged?.(); toast('success', 'Timesheets saved', runStatus === 'draft' ? 'Sep 2026 run needs recalculation' : 'PATCH /api/timesheets/ · 200'); },
+      typeCols: align([['Code'], ['Name'], ['Kind'], ['Method'], ['Default', 'right'], ['Pre-tax'], ['Assigned', 'right'], ['', 'right']]), types,
+      newType: () => toast('info', 'New deduction type', 'POST /api/deduction-types/'),
+      codes, assign,
+      brackets, taxErrCount: uniq.length ? `${uniq.length} problem${uniq.length > 1 ? 's' : ''} to fix before saving` : '', taxErrList: uniq,
+      taxBlocked: uniq.length ? 'true' : 'false',
+      addBracket: () => this.setState(s => ({ br: [...s.br, { lower: '', upper: '', noCap: true, rate: '' }] })),
+      resetTax: () => this.setState({ br: this.init('').br }),
+      saveTax: () => { if (!uniq.length) { p.onInputsChanged?.(); toast('success', 'Tax brackets saved', 'Draft runs need recalculation'); } },
+    };
+  }
+}
+</script>
+</body>
+</html>

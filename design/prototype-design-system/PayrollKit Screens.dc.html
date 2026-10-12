@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>html,body{margin:0;background:#dfe3ea}a{color:#4338ca}a:hover{color:#3730a3}</style>
+</helmet>
+<div style="padding:64px;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#131a2a;display:flex;flex-direction:column;gap:96px;width:max-content">
+  <header style="display:flex;flex-direction:column;gap:8px;max-width:1100px">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:20px;color:#475167">PayrollKit · Northwind Demo Co · all data is fake</span>
+    <h1 style="margin:0;font-size:64px;line-height:72px;font-weight:600;letter-spacing:-.02em">Screens, light and dark</h1>
+    <p style="margin:0;font-size:22px;line-height:32px;color:#475167">Every frame is the live prototype at 1440 × 900 or 390 × 844. Open <a href="PayrollKit.dc.html">PayrollKit.dc.html</a> to click through, or <a href="PayrollKit Design System.dc.html">the design system</a> for tokens and components.</p>
+  </header>
+  <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+  <section style="display:flex;flex-direction:column;gap:40px">
+    <h2 style="margin:0;font-size:40px;font-weight:600;letter-spacing:-.01em;padding-bottom:16px;border-bottom:2px solid #c8cfdc">{{ g.title }}</h2>
+    <sc-for list="{{ g.rows }}" as="r">
+    <div id="{{ r.id }}" style="display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;align-items:baseline;gap:16px">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;padding:4px 10px;border-radius:6px;background:#131a2a;color:#fff">{{ r.id }}</span>
+        <span style="font-size:28px;font-weight:600">{{ r.title }}</span>
+        <span style="font-size:20px;color:#475167">{{ r.note }}</span>
+      </div>
+      <div style="display:flex;gap:48px;align-items:flex-start">
+        <sc-for list="{{ r.frames }}" as="f">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:16px;color:#475167">{{ f.caption }}</span>
+          <div data-frame="{{ f.key }}" style="width:{{ f.w }};height:{{ f.h }};border-radius:10px;overflow:hidden;box-shadow:0 30px 60px -20px rgba(19,26,42,.35),0 0 0 1px rgba(19,26,42,.12);background:{{ f.bg }}">
+            <sc-if value="{{ f.on }}" hint-placeholder-val="{{ false }}"><dc-import name="PayrollKit" theme="{{ f.theme }}" role="{{ r.role }}" screen="{{ r.screen }}" run-state="{{ r.runState }}" list-state="{{ r.listState }}" variant="{{ r.variant }}" frame-height="{{ f.h }}" style="width:{{ f.w }};height:{{ f.h }}" hint-size="{{ f.hint }}"></dc-import></sc-if>
+          </div>
+        </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-for>
+  </section>
+  </sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { on: {} };
+  componentDidMount() {
+    this.io = new IntersectionObserver((es) => {
+      const add = {};
+      es.forEach(e => { if (e.isIntersecting) { add[e.target.dataset.frame] = true; this.io.unobserve(e.target); } });
+      if (Object.keys(add).length) this.setState(s => ({ on: { ...s.on, ...add } }));
+    }, { rootMargin: '600px' });
+    this.observe();
+  }
+  componentDidUpdate() { this.observe(); }
+  componentWillUnmount() { this.io?.disconnect(); }
+  observe() { document.querySelectorAll('[data-frame]').forEach(el => { if (!el.dataset.obs && !this.state.on[el.dataset.frame]) { el.dataset.obs = '1'; this.io.observe(el); } }); }
+  renderVals() {
+    const D = (id, title, screen, o = {}) => ({ id, title, screen, role: o.role ?? 'admin', runState: o.runState ?? 'draft', listState: o.listState ?? 'ready', variant: o.variant ?? '', note: o.note ?? '', mobile: !!o.mobile });
+    const withFrames = (r) => ({
+      ...r,
+      frames: ['light', 'dark'].map(theme => ({
+        theme, key: `${r.id}-${theme}`, on: !!this.state.on[`${r.id}-${theme}`], bg: theme === 'dark' ? '#080b15' : '#eef1f6',
+        ...(r.mobile ? { w: '390px', h: '844px', hint: '390px,844px', caption: `390 · ${theme}` } : { w: '1440px', h: '900px', hint: '1440px,900px', caption: `1440 · ${theme}` }),
+      })),
+    });
+    const groups = [
+      { title: 'Sign in & overview', rows: [
+        D('01', 'Login', 'login', { note: 'One-click demo accounts, fake-data notice' }),
+        D('02', 'Dashboard', 'dashboard', { note: 'admin' }),
+        D('03', 'Payroll runs', 'runs'),
+      ] },
+      { title: 'Payroll run detail (hero)', rows: [
+        D('04a', 'Run · Draft', 'run', { note: 'admin: Calculate + Approve enabled' }),
+        D('04b', 'Run · Draft, inputs changed', 'run', { role: 'manager', runState: 'stale', note: 'manager: Approve / Mark paid disabled, "Admin only"' }),
+        D('04c', 'Run · Approved', 'run', { runState: 'approved', note: 'Reopen + Mark paid enabled' }),
+        D('04d', 'Run · Mark paid confirm', 'run', { runState: 'approved', variant: 'confirm-paid', note: 'states the consequence' }),
+        D('04e', 'Run · Paid, locked', 'run', { runState: 'paid', note: 'read-only, export / PDF only' }),
+        D('05', 'Payslip drawer · E001 Ava Stone', 'run', { variant: 'drawer', note: 'worked example, reconciliation, YTD' }),
+      ] },
+      { title: 'People', rows: [
+        D('06a', 'Employees', 'employees', { note: 'filters, CSV import' }),
+        D('06b', 'Employee edit · inline errors', 'employee', { variant: 'errors' }),
+        D('07a', 'CSV import · dropzone', 'import'),
+        D('07b', 'CSV import · row errors', 'import', { variant: 'errors', note: 'all-or-nothing' }),
+      ] },
+      { title: 'Setup', rows: [
+        D('08a', 'Pay periods', 'periods'),
+        D('08b', 'Timesheets · inline editing', 'timesheets', { variant: 'edited', note: 'one edit, one invalid value' }),
+        D('09', 'Deductions & benefits', 'deductions', { variant: 'assign', note: 'assignment row in edit mode with an override' }),
+        D('10', 'Tax tables · validation', 'tax', { variant: 'invalid' }),
+        D('11', 'Audit log · expanded diff', 'audit', { variant: 'expanded' }),
+      ] },
+      { title: 'Employee self-service', rows: [
+        D('12a', 'My payslips', 'myPayslips', { role: 'employee', note: 'demo_employee = Dev Patel' }),
+        D('12b', 'My payslip detail', 'myPayslips', { role: 'employee', variant: 'detail' }),
+      ] },
+      { title: 'States', rows: [
+        D('13a', 'Loading skeleton', 'runs', { listState: 'loading' }),
+        D('13b', 'Empty state', 'employees', { listState: 'empty' }),
+        D('13c', '403 · You do not have access', 'audit', { role: 'manager' }),
+        D('13d', '409 · Cannot delete, it is still in use', 'deductions', { variant: 'conflict' }),
+        D('13e', 'Session expired', 'session'),
+        D('13f', 'Login · wrong password', 'login', { variant: 'login-error' }),
+      ] },
+      { title: 'Mobile · 390', rows: [
+        D('M1', 'Login', 'login', { mobile: true }),
+        D('M2', 'Run detail', 'run', { mobile: true, runState: 'stale' }),
+        D('M3', 'Payslip (drawer, full width)', 'run', { mobile: true, variant: 'drawer' }),
+        D('M4', 'My payslips', 'myPayslips', { mobile: true, role: 'employee' }),
+        D('M5', 'My payslip detail', 'myPayslips', { mobile: true, role: 'employee', variant: 'detail' }),
+      ] },
+    ].map(g => ({ ...g, rows: g.rows.map(withFrames) }));
+    return { groups };
+  }
+}
+</script>
+</body>
+</html>

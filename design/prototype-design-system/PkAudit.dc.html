@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="display:flex;flex-direction:column;gap:16px">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+    <div>
+      <div style="display:flex;align-items:center;gap:10px"><h1 style="margin:0;font-size:22px;line-height:28px;font-weight:600;letter-spacing:-.01em">Audit log</h1><span style="display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;border:1px solid var(--pk-border-strong);font-size:12px;color:var(--pk-text-2);white-space:nowrap"><i class="icon-lock" style="font-size:11px"></i>Append-only</span></div>
+      <p style="margin:2px 0 0;color:var(--pk-text-2)">Every create, update, calculation, approval, payment and import. Entries can never be edited.</p>
+    </div>
+    <button onClick="{{ exportLog }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap"><i class="icon-download"></i>Export JSON</button>
+  </div>
+  <div style="background:var(--pk-surface);border:1px solid var(--pk-border);border-radius:10px;box-shadow:var(--pk-shadow-1);overflow:hidden">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border-bottom:1px solid var(--pk-border)">
+      <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--pk-text-2)">Action
+        <select value="{{ fAction }}" onChange="{{ setAction }}" style="height:30px;padding:0 8px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);color:var(--pk-text);font-family:var(--pk-mono);font-size:12px">
+          <sc-for list="{{ actions }}" as="a"><option value="{{ a.v }}">{{ a.l }}</option></sc-for>
+        </select>
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--pk-text-2)">Object
+        <select value="{{ fType }}" onChange="{{ setType }}" style="height:30px;padding:0 8px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);color:var(--pk-text)">
+          <sc-for list="{{ typesOpt }}" as="a"><option value="{{ a.v }}">{{ a.l }}</option></sc-for>
+        </select>
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--pk-text-2)">Actor
+        <select value="{{ fActor }}" onChange="{{ setActor }}" style="height:30px;padding:0 8px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);color:var(--pk-text);font-family:var(--pk-mono);font-size:12px">
+          <option value="">Anyone</option><option value="demo_admin">demo_admin</option><option value="demo_manager">demo_manager</option>
+        </select>
+      </label>
+      <sc-if value="{{ filtered }}"><button onClick="{{ clear }}" style="display:inline-flex;align-items:center;gap:4px;height:30px;padding:0 8px;border-radius:6px;border:0;background:transparent;color:var(--pk-primary-fg);font-weight:500;cursor:pointer;white-space:nowrap"><i class="icon-x"></i>Clear</button></sc-if>
+      <span style="margin-left:auto;font-size:12px;color:var(--pk-text-3)">{{ countLabel }}</span>
+    </div>
+    <sc-if value="{{ showTable }}">
+    <div style="overflow:auto">
+    <table style="width:100%;border-collapse:separate;border-spacing:0">
+      <thead><tr>
+        <th style="position:sticky;top:0;background:var(--pk-surface-2);height:34px;width:40px;border-bottom:1px solid var(--pk-border);white-space:nowrap"></th>
+        <th style="position:sticky;top:0;background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Time (UTC)</th>
+        <th style="position:sticky;top:0;background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Actor</th>
+        <th style="position:sticky;top:0;background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Action</th>
+        <th style="position:sticky;top:0;background:var(--pk-surface-2);height:34px;padding:0 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Object</th>
+        <th style="position:sticky;top:0;background:var(--pk-surface-2);height:34px;padding:0 16px 0 12px;text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--pk-text-3);border-bottom:1px solid var(--pk-border);white-space:nowrap">Summary</th>
+      </tr></thead>
+      <tbody>
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+        <tr tabindex="0" onClick="{{ r.toggle }}" onKeyDown="{{ r.key }}" aria-expanded="{{ r.open }}" style="cursor:pointer;background:{{ r.bg }}" style-hover="background:var(--pk-hover)">
+          <td style="height:40px;padding:0 0 0 14px;border-bottom:1px solid {{ r.rowBorder }}"><i class="{{ r.chev }}" style="color:var(--pk-text-3)"></i></td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid {{ r.rowBorder }};font-family:var(--pk-mono);font-size:12.5px;white-space:nowrap">{{ r.time }}</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid {{ r.rowBorder }};font-family:var(--pk-mono);font-size:12.5px;white-space:nowrap">{{ r.actor }}</td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid {{ r.rowBorder }}"><span style="display:inline-flex;align-items:center;gap:6px;font-family:var(--pk-mono);font-size:12px;padding:2px 7px;border-radius:4px;background:var(--pk-surface-2);border:1px solid var(--pk-border);white-space:nowrap"><i class="{{ r.icon }}" style="font-size:12px;color:var(--pk-text-3)"></i>{{ r.action }}</span></td>
+          <td style="height:40px;padding:0 12px;border-bottom:1px solid {{ r.rowBorder }};white-space:nowrap">{{ r.type }} <span style="font-family:var(--pk-mono);color:var(--pk-text-3)">#{{ r.oid }}</span></td>
+          <td style="height:40px;padding:0 16px 0 12px;border-bottom:1px solid {{ r.rowBorder }};color:var(--pk-text-2)">{{ r.summary }}</td>
+        </tr>
+        <sc-if value="{{ r.open }}">
+        <tr style="background:var(--pk-surface-2)">
+          <td style="border-bottom:1px solid var(--pk-border)"></td>
+          <td colspan="5" style="padding:4px 16px 14px 12px;border-bottom:1px solid var(--pk-border)">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px;color:var(--pk-text-3)"><span style="font-weight:600;letter-spacing:.05em;text-transform:uppercase">changes</span><span style="font-family:var(--pk-mono)">GET /api/audit-logs/{{ r.n }}/</span></div>
+            <pre style="margin:0;padding:10px 12px;border-radius:8px;background:var(--pk-surface);border:1px solid var(--pk-border);font-family:var(--pk-mono);font-size:12px;line-height:1.7;overflow:auto"><span style="color:var(--pk-text-3)">{</span>
+<sc-for list="{{ r.diff }}" as="d"><span style="display:block;padding:0 6px;margin:0 -6px;border-radius:3px;background:{{ d.bg }};color:{{ d.fg }}"><span aria-label="{{ d.aria }}" style="display:inline-block;width:16px;font-weight:600">{{ d.sign }}</span>  "{{ d.key }}": {{ d.val }}</span></sc-for><span style="color:var(--pk-text-3)">}</span></pre>
+          </td>
+        </tr>
+        </sc-if>
+        </sc-for>
+      </tbody>
+    </table>
+    </div>
+    </sc-if>
+    <sc-if value="{{ loading }}"><div aria-busy="true"><sc-for list="{{ skel }}" as="k"><div style="height:40px;display:flex;gap:24px;align-items:center;padding:0 16px;border-bottom:1px solid var(--pk-border)"><span style="height:10px;width:110px;border-radius:4px;background:var(--pk-skeleton);animation:pkPulse 1.4s ease-in-out infinite"></span><span style="height:10px;width:80px;border-radius:4px;background:var(--pk-skeleton);animation:pkPulse 1.4s ease-in-out infinite"></span><span style="height:16px;width:150px;border-radius:4px;background:var(--pk-skeleton);animation:pkPulse 1.4s ease-in-out infinite"></span><span style="height:10px;width:{{ k }};border-radius:4px;background:var(--pk-skeleton);animation:pkPulse 1.4s ease-in-out infinite"></span></div></sc-for></div></sc-if>
+    <sc-if value="{{ noResults }}">
+    <div style="padding:48px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px">
+      <span style="width:44px;height:44px;border-radius:10px;background:var(--pk-surface-2);border:1px solid var(--pk-border);color:var(--pk-text-2);display:grid;place-items:center;margin-bottom:6px"><i class="icon-scroll-text" style="font-size:20px"></i></span>
+      <h2 style="margin:0;font-size:15px;font-weight:600">{{ emptyTitle }}</h2>
+      <p style="margin:0 0 10px;color:var(--pk-text-2);max-width:380px">{{ emptyBody }}</p>
+      <sc-if value="{{ filtered }}"><button onClick="{{ clear }}" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:6px;border:1px solid var(--pk-border-strong);background:var(--pk-surface);font-weight:500;cursor:pointer;white-space:nowrap"><i class="icon-filter-x"></i>Clear filters</button></sc-if>
+    </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { open: this.props.variant === 'expanded' ? 0 : null, fAction: '', fType: '', fActor: '' };
+  renderVals() {
+    const p = this.props, st = this.state, ls = p.listState ?? 'ready';
+    const ev = (p.events || []).map((e, i) => ({ ...e, i }));
+    const rows = ev.filter(e => (!st.fAction || e.action === st.fAction) && (!st.fType || e.type === st.fType) && (!st.fActor || e.actor === st.fActor)).map(e => {
+      const open = st.open === e.i;
+      const toggle = () => this.setState({ open: open ? null : e.i });
+      return {
+        ...e, n: 120 - e.i, open, bg: open ? 'var(--pk-surface-2)' : 'transparent', rowBorder: open ? 'transparent' : 'var(--pk-border)',
+        chev: open ? 'icon-chevron-down' : 'icon-chevron-right', toggle, key: (k) => { if (k.key === 'Enter' || k.key === ' ') { k.preventDefault(); toggle(); } },
+        summary: `${e.verb} ${e.object}`,
+        diff: e.diff.map(([s, key, val]) => ({ sign: s, key, val, aria: s === '+' ? 'added' : 'removed', bg: s === '+' ? 'var(--pk-primary-soft)' : 'var(--pk-rose-soft)', fg: s === '+' ? 'var(--pk-primary-soft-fg)' : 'var(--pk-rose-fg)' })),
+      };
+    });
+    const uniq = (k) => [...new Set(ev.map(e => e[k]))];
+    const filtered = !!(st.fAction || st.fType || st.fActor);
+    return {
+      actions: [{ v: '', l: 'All actions' }, ...uniq('action').map(a => ({ v: a, l: a }))],
+      typesOpt: [{ v: '', l: 'All objects' }, ...uniq('type').map(a => ({ v: a, l: a }))],
+      fAction: st.fAction, fType: st.fType, fActor: st.fActor,
+      setAction: (e) => this.setState({ fAction: e.target.value, open: null }), setType: (e) => this.setState({ fType: e.target.value, open: null }), setActor: (e) => this.setState({ fActor: e.target.value, open: null }),
+      filtered, clear: () => this.setState({ fAction: '', fType: '', fActor: '' }),
+      rows, showTable: ls === 'ready' && rows.length > 0, loading: ls === 'loading', noResults: ls === 'empty' || (ls === 'ready' && rows.length === 0),
+      emptyTitle: ls === 'empty' ? 'No audit events yet' : 'No events match these filters',
+      emptyBody: ls === 'empty' ? 'Events appear here as soon as anyone creates, changes, calculates or approves something.' : 'Try another action, object type or actor.',
+      countLabel: ls === 'ready' ? `${rows.length} events` : '', skel: ['30%', '42%', '26%', '38%', '34%'],
+      exportLog: () => p.onToast?.('success', 'Exported audit-log.json'),
+    };
+  }
+}
+</script>
+</body>
+</html>
